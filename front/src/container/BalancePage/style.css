@@ -1,0 +1,6 @@
+.background-container-2 {
+  color: white;
+  width: 393px;
+  background: url('../../../public/background-2.png') no-repeat center center;
+  background-size: cover;
+}

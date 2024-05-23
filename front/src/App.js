@@ -1,30 +1,58 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./AuthContext"; // Змініть імпорт з { AuthContext }
+// На цей момент є проблема зберігання користувачів, треба знати та виправити проблему.
+// Також з'явилося багато помилок після останньої твоєї модернізації. Знайди неузгодження
 
-// import { AuthContext } from "./AuthContext";
-import { AuthRoute } from "./AuthRoute";
+// Наступна рекомендація від чату GPT, але вона суперечлива, тому що у завданні у нас стоїть мета
+// підтвердити акаунт що може зробити користувач, який вже увійшов в акаунт:
+// "Переконайтеся, що PrivateRoute використовується тільки для захищених ресурсів,
+// куди доступ мають тільки підтверджені користувачі.
+// Ця логіка не повинна застосовуватися до самої сторінки signup-confirm,
+// оскільки це може призвести до постійного циклу перенаправлення,
+// якщо сторінка signup-confirm також захищена через PrivateRoute."
+
+// Створи файли AuthRoute, AuthContext, SignupPage, SignupConfirmPage, BalancePage враховуючи умови, вказані в коментарях файлу App.js для створення процесів на цих сторінках.
+// import { ErrorBoundary } from "./component/ErrorBoundary";
+// Якщо узагальнити завдання:
+// 1. Потрібно, щоб після введення логіна та пароля на сторінці реєстрації SignupPage
+// (у разі, якщо такого користувача ще не було створено раніше, якщо він існує треба сповістити про наявність такого користувача) створювався код перевірки,
+// який з'являвся у вікні alert, після чого відбувався перехід на сторінку SignupConfirmPage,
+// де буде потрібно ввести цей код і після успішного введення та натискання кнопки "продовжити"
+// відбувався перехід на сторінку BalancePage path="/balance"
+// 2. const authContextData = {}; -  Визначте відповідну структуру або надайте відповідні дані. Де повинна бути ця змінна, в якому файлі?
+
+//Файл App.js
+import React from "react";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./PrivateRoute";
-import WellcomePage from "./WellcomePage";
-import { SigninPage } from "./SigninPage";
-import { SignupPage } from "./SignupPage";
-import { SignupConfirmPage } from "./SignupConfirmPage";
-import { RecoveryConfirmPage } from "./RecoveryConfirmPage";
-import { RecoveryPage } from "./RecoveryPage";
-import SendPage from "./SendPage";
-import TransactionPage from "./TransactionPage";
-import BalancePage from "./BalancePage";
-import NotificationsPage from "./NotificationsPage";
-import SettingsPage from "./SettingsPage";
-import RecivePage from "./RecivePage";
-import Error from "./ErrorPage";
+import { SigninPage } from "./container/SigninPage";
+import { SignupPage } from "./container/SignupPage";
+import { AuthProvider } from "./AuthContext";
+import { SignupConfirmPage } from "./container/SignupConfirmPage";
+import { RecoveryConfirmPage } from "./container/RecoveryConfirmPage";
+import { RecoveryPage } from "./container/RecoveryPage";
+import { DeleteAccountPage } from "./container/DeleteAccountPage";
+import { UsersPage } from "./container/UsersPage";
+// import { AuthContext } from "./AuthContext";
+
+import AuthRoute from "./AuthRoute";
+import WellcomePage from "./container/WellcomePage";
+import SendPage from "./container/SendPage";
+import TransactionPage from "./container/TransactionPage";
+import BalancePage from "./container/BalancePage";
+import NotificationsPage from "./container/NotificationsPage";
+import SettingsPage from "./container/SettingsPage";
+import ReceivePage from "./container/ReceivePage";
+
+import Error from "./container/ErrorPage";
 
 function App() {
+  // const authContextData = {}; // Визначити відповідну структуру або надайти відповідні дані
+
   return (
-    <AuthProvider value={authContextData}>
-      {/* <AuthContext.Provider value={authContextData}> Створюємо контекст, в якому будемо тримати дані аутентифікації
-      В контексті буде знаходитись:
-      створений state через useReducer, який буде знаходитись властивість token та об'єкт user dispatch функція, 
+    <AuthProvider>
+      {/* AuthContext.Provider value={authContextData} Створюємо контекст, в якому будемо тримати дані аутентифікації
+      В контексті буде знаходитись: створений state через useReducer, 
+      який буде знаходитись властивість token та об'єкт user dispatch функція, 
       яка буде мати наступні типи дій: увійти в акаунт, вийти з акаунту */}
       <BrowserRouter>
         <Routes>
@@ -40,6 +68,9 @@ function App() {
               </AuthRoute>
             }
           />
+
+          {/* <Route path="/balance" element={<BalancePage />} />
+          <Route path="/settings" element={<SettingsPage />} /> */}
           <Route
             path="/signup"
             element={
@@ -54,10 +85,10 @@ function App() {
           <Route
             path="/signup-confirm"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowUnconfirmed={true}>
                 {/* На сторінці /signup-confirm використовуємо PrivateRoute, адже підтвердити акаунт може користувач, який вже увійшов в акаунт 
                 Після підтвердження акаунту потрібно оновити дані аутентифікації в контексті */}
-                <SignupConfirmPage />
+                {<SignupConfirmPage />}
                 {/* <SignupConfirmPage /> На цій сторінці вводимо код підтвердження реєстрації акаунта та після успішного запиту переводимо на сторінку /balance 
                 Перевіряємо в контексті аутентифікації чи user.confirm. Якщо так, то переводимо на сторінку /balance */}
               </PrivateRoute>
@@ -90,6 +121,14 @@ function App() {
               <AuthRoute>
                 <RecoveryConfirmPage />
                 {/* <RecoveryConfirmPage /> Сторінка підтвердження відновлення та оновлення пароля.  Після відправки форми потрібно перевести на сторінку /balance */}
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/delete-account"
+            element={
+              <AuthRoute>
+                <DeleteAccountPage />
               </AuthRoute>
             }
           />
@@ -135,11 +174,11 @@ function App() {
             }
           />
           <Route
-            path="/recive"
+            path="/receive"
             element={
               <PrivateRoute>
-                <RecivePage />
-                {/* <RecivePage /> Сторінка поповнення балансу. 
+                <ReceivePage />
+                {/* <ReceivePage /> Сторінка поповнення балансу. 
                 Користувач вводить суму, натискає на платіжний метод і відправляється запит. 
                 Після чого створюється нова транзакція та нова нотифікація */}
               </PrivateRoute>
@@ -166,6 +205,14 @@ function App() {
                 В сторінці є trainsactionId, який вказує на ідентифікатор транзакції, 
                 який використовується для отримання та виводи інформації про конкретну транзакцію. 
                 Перехід на цю сторінку здійснюється через натискання на карточку транзакції на сторінці /balance */}
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users" // Новостворений маршрут для сторінки користувачів
+            element={
+              <PrivateRoute>
+                <UsersPage />
               </PrivateRoute>
             }
           />

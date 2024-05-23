@@ -1,0 +1,227 @@
+У наступному тексті описана суть та логіка потрібних файлів для додатку Bank App.
+Далі буде надано код вже створених файлів, які треба буде перевірити на помилки, логіку дій та взаємозв'язок між вже створеними файлами.
+
+Опис по створенню файлів 
+
+AuthContext.Provider value={authContextData}  Створюємо контекст у файлі AuthContext, в якому будемо тримати дані аутентифікації
+В контексті буде знаходитись: створений state через useReducer, який буде знаходитись властивість token та об'єкт user dispatch функція, яка буде мати наступні типи дій: увійти в акаунт, вийти з акаунту
+      
+AuthRoute це компонент, який перевіряє, чи є в контексті аутентифікації токен, якщо так, то переводить на сторінку /balance 
+         
+WellcomePage На цій сторінці ми створюємо верстку та розміщуємо дві кнопки-посилання на сторінку /signup та сторінку /signin
+             
+SignupPage На цій сторінці створюємо форму, яка відправляє запит на реєстрацію користувача та переводить на сторінку /signup-comfirm. Після реєстрації потрібно зберегти дані аутентифікації в контекст 
+
+На сторінці /signup-confirm використовуємо PrivateRoute, адже підтвердити акаунт може користувач, який вже увійшов в акаунт Після підтвердження акаунту потрібно оновити дані аутентифікації в контексті 
+          
+SignupConfirmPage На цій сторінці вводимо код підтвердження реєстрації акаунта та після успішного запиту переводимо на сторінку /balance. Перевіряємо в контексті аутентифікації чи user.confirm. Якщо так, то переводимо на сторінку /balance
+        
+SigninPage Вхід в акаунт. Зберігаємо дані аутентифікації в контекст. Якщо user.confirm є false, то перенаправляємо на /signup-confirm.
+              
+RecoveryPage Сторінка відновлення акаунту. Після вводу пошти, створюється код з підтвердженням відновлення акаунту, переводимо на сторінку /recovery-confirm
+             
+RecoveryConfirmPage Сторінка підтвердження відновлення та оновлення пароля.  Після відправки форми потрібно перевести на сторінку /balance
+              
+PrivateRoute Приватний роут, який перевіряє наявність токена в контексті аутентифікації. Будь-який запит, який відправляється в сторінках під приватним роутом повинні передавати токен (будь-яким варіантом) на сервер для перевірки токена та отримання інформації що за користувач відправляє дані та передати конкретно його дані
+                
+NotificationsPage Сторінка списку нотифікацій, який створюються при діях:
+Вхід в акаунт
+Відновлення акаунту
+Зміна пароля
+Зміна пошти
+Поповнення
+Переказ 
+              
+SettingsPage Сторінка налаштувань, на якій можна:
+Змінити пароль
+Змінити пошту
+Вийти з акаунту
+Кожна дія повинна в кінці оновлювати контекст аутентифікації
+              
+receivePage Сторінка поповнення балансу. 
+Користувач вводить суму, натискає на платіжний метод і відправляється запит. 
+Після чого створюється нова транзакція та нова нотифікація
+      
+SendPage Користувач вводить пошту та суму. Після чого у користувача, який відправив суму, створюється транзакція на списання грошей на нотифікацію, а у користувача, який отримав гроші, створюється транзакція на отримання грошей та нотифікацію.
+       
+TransactionPage Сторінка з детальною інформацією про конкретну транзакцію. В сторінці є trainsactionId, який вказує на ідентифікатор транзакції, який використовується для отримання та виводи інформації про конкретну транзакцію. Перехід на цю сторінку здійснюється через натискання на карточку транзакції на сторінці /balance
+              
+Далі код файлів:
+
+Файл SignupPage
+import React, { useContext } from "react";
+import { AuthContext } from "../../AuthContext";
+
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../AuthActions";
+
+export const SignupPage = () => {
+  const { dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const confirmationCode = Math.random().toString(36).substring(2, 12);
+
+    const registrationResult = registerUser(email, password, confirmationCode);
+    if (registrationResult.success) {
+      alert(
+        `Реєстрація пройшла успішно, ваш код підтвердження: ${confirmationCode}`
+      );
+      dispatch({
+        type: "REGISTER_USER",
+        payload: { email, password },
+      });
+      navigate("/signup-confirm");
+    } else {
+      alert(registrationResult.message);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="default-container">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="nav_back-button"
+        >
+          ⟵ Назад
+        </button>
+        <h1>Реєстрація</h1>
+        <div className="input_field-container">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+            className="input_field"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Пароль"
+            required
+            className="input_field"
+          />
+        </div>
+        <p>
+          Чи маєте акаунт?{" "}
+          <span
+            onClick={() => navigate("/signin")}
+            style={{ color: "blue", cursor: "pointer" }}
+          >
+            Увійдіть
+          </span>
+        </p>
+        <button
+          type="submit"
+          style={{ opacity: "1" }}
+          className="continue-button"
+        >
+          Продовжити
+        </button>
+      </div>
+    </form>
+  );
+};
+
+
+Файл SignupConfirmPage
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../AuthContext";
+import { useNavigate } from "react-router-dom";
+
+export const SignupConfirmPage = () => {
+  const { state, dispatch } = useContext(AuthContext);
+  const { users } = state;
+  const { user } = state;
+  const navigate = useNavigate();
+  const [codeInput, setCodeInput] = useState("");
+
+  const handleSubmitConfirmation = (event) => {
+    event.preventDefault();
+    const user = users.find((u) => u.email === state.user?.email);
+    if (user && codeInput.trim() === user.confirmationCode) {
+      dispatch({ type: "CONFIRM_USER", email: user.email });
+      alert("Підтвердження успішно!");
+      navigate("/balance");
+    } else {
+      alert("Неправильний код підтвердження.");
+    }
+  };
+
+  return (
+    <div>
+      <h1>Підтвердження реєстрації</h1>
+      <form onSubmit={handleSubmitConfirmation}>
+        <input
+          type="text"
+          value={codeInput}
+          onChange={(event) => setCodeInput(event.target.value)}
+          placeholder="Введіть код підтвердження"
+          required
+        />
+        <button type="submit">Підтвердити</button>
+      </form>
+    </div>
+  );
+};
+
+Файл AuthContext
+import React, { createContext, useReducer, useEffect } from "react";
+import { usersDatabase } from "./AuthActions";
+
+const initialState = {
+  token: null,
+  user: null,
+  isLoggedIn: false,
+  users: usersDatabase,
+};
+
+export const reducer = (state, action) => {
+  switch (action.type) {
+    case "REGISTER_USER":
+      return {
+        ...state,
+        users: [...state.users, { ...action.payload, confirmed: false }],
+        user: { ...action.payload, confirmed: false },
+      };
+    case "CONFIRM_USER":
+      const userIndex = state.users.findIndex(
+        (user) => user.email === action.email
+      );
+      if (userIndex === -1) return state; // Якщо користувача немає, повертайте поточний стан
+
+      const updatedUsers = state.users.map((user, index) =>
+        index === userIndex ? { ...user, confirmed: true } : user
+      );
+      return {
+        ...state,
+        users: updatedUsers,
+        user: updatedUsers[userIndex],
+      };
+    default:
+      return state;
+  }
+};
+
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  
+  return (
+    <AuthContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+Завдання: 
+1. Створити на основі структури даних вже створених файлів, вказаних вище файли AuthRoute та PrivateRoute згідно опису вище. PrivateRoute не повинен блокувати весь зміст сторінки, які будуть огорнуті у нього, а тількі дані реєстрації та інші приватні дані.
+2. Створити Файл AuthActions, де буде змінна usersDatabase та будуть зберігатись створені користувачі в локальній базі даних.

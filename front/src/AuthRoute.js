@@ -1,9 +1,16 @@
-import { useContext } from "react";
+// 1 Файл AuthRoute
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
-export const AuthRoute = ({ children }) => {
-  const { state } = useContext(AuthContext); // Додайте state тут
-  const { token } = state; // Отримайте token зі state
-  return token ? children : <Navigate to="/signin" />;
+const AuthRoute = ({ children }) => {
+  const { token } = useContext(AuthContext);
+
+  if (token) {
+    return <Navigate to="/balance" />;
+  }
+
+  return children;
 };
+
+export default AuthRoute;
