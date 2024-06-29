@@ -1,0 +1,520 @@
+// Файл BalancePage
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../AuthContext"; // Adjust the path accordingly
+import TransactionList from "../../component/TransactionList";
+
+export const BalancePage = () => {
+  const { user, transactions, dispatch } = useContext(AuthContext);
+
+  const calculateBalance = () => {
+    return transactions.reduce((balance, transaction) => {
+      if (!transaction.isPending) {
+        if (transaction.type === "receive" && transaction.to === user.email) {
+          return balance + parseFloat(transaction.amount);
+        } else if (
+          transaction.type === "send" &&
+          transaction.from === user.email
+        ) {
+          return balance - parseFloat(transaction.amount);
+        }
+      }
+      return balance;
+    }, user.balance || 0); // Start with the user's initial balance
+  };
+  
+
+  const balance = calculateBalance();
+  console.log(`Current balance updated to: $${balance}`);
+
+  const handleClearTransactions = () => {
+    dispatch({ type: "CLEAR_TRANSACTIONS" });
+  };
+  
+  const pendingTransactions = transactions.filter(
+    (t) => t.from === user.email && t.isPending
+  );
+  return (
+    <div className="default-container">
+      <Link to="/settings" className="nav_back-button">
+        Settings
+      </Link>
+      <Link
+        to="/users"
+        className="nav_back-button"
+        style={{ right: "180px", left: "auto" }}
+      >
+        Users
+      </Link>
+      <Link
+        to="/notifications"
+        className="nav_back-button"
+        style={{ right: "30px", left: "auto" }}
+      >
+        Notifications
+      </Link>
+      <h1>Main Wallet</h1>
+      <h2>Ви увійшли як {user ? `${user.email}` : "Guest"}</h2>
+    
+      <p>Balance: ${balance.toFixed(2)}</p>
+      
+      {pendingTransactions.length > 0 && (
+        <div>
+          <h3>Reserved Funds</h3>
+          {pendingTransactions.map((t) => (
+            <p key={t.transactionId}>
+              ${t.amount} reserved for transaction ID {t.transactionId}
+            </p>
+          ))}
+        </div>
+      )}
+      
+      <div style={{ marginTop: "20px" }}>
+        <TransactionList transactions={transactions} />
+      </div>
+      <div className="button-container">
+        <Link to="/receive" className="continue-button">
+          Receive
+        </Link>
+        <Link to="/send" className="login-button">
+          Send
+        </Link>
+        <button onClick={handleClearTransactions} className="clear-button">
+          Clear Transactions
+        </button>
+      </div>
+    </div>
+  );
+};
+export default BalancePage;
+
+// Файл SendPage
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../AuthContext";
+import { generateTransactionId } from "../../AuthActions";
+import { Link } from "react-router-dom";
+
+const SendPage = () => {
+  const [email, setEmail] = useState("");
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Western Union");
+  const [isSending, setIsSending] = useState(false);
+  const { user, users, dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleSend = async (event) => {
+    event.preventDefault();
+
+    console.log("Handling send..."); // Log send attempt, add DATE-12.06.24
+
+    if (isSending) return;
+    setIsSending(true);
+
+    if (!email || email === user.email) {
+      alert("Недопустимий email одержувача.");
+      setIsSending(false);
+      return;
+    }
+
+    const recipient = users.find((u) => u.email === email);
+    if (!recipient) {
+      alert("Email одержувача не знайдено в системі.");
+      setIsSending(false);
+      return;
+    }
+
+    const transaction = {
+      transactionId: generateTransactionId(),
+      time: new Date().toISOString(),
+      amount: parseFloat(amount),
+      from: user.email,
+      to: email,
+      type: "send",
+      paymentMethod,
+      isPending: paymentMethod === "Western Union", // Add pending for Western Union
+    };
+
+    console.log("Спроба відправити транзакцію:", transaction);
+
+    dispatch({
+      type: "ADD_TRANSACTION",
+      payload: transaction,
+    });
+
+    if (paymentMethod === "MoneyGram") {
+      dispatch({
+        type: "ADD_TRANSACTION",
+        payload: {
+          ...transaction,
+          type: "receive",
+          from: user.email,
+          to: email,
+          isPending: false,
+        },
+      });
+    }
+    //========== add paymentMethod === "MoneyGram" end DATE-17.06.24-11:48
+
+    dispatch({
+      type: "ADD_EVENT",
+      payload: {
+        title: "Send Money",
+        info: `Відправлено $${transaction.amount} на ${email} через ${transaction.paymentMethod} о ${transaction.time}`,
+      },
+    });
+
+    console.log("Dispatched SEND transaction:", transaction);
+
+    navigate("/balance");
+    setIsSending(false);
+  };
+
+  return (
+    <div className="default-container">
+      <h2>Ви увійшли як {user ? `${user.email}` : "Guest"}</h2>
+      <Link to="/balance" className="nav_back-button">
+        Назад
+      </Link>
+
+      <h1>Відправити кошти</h1>
+      <form onSubmit={handleSend}>
+        <div className="input_field-container">
+          <input
+            className="input_field"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email одержувача"
+            required
+          />
+          <input
+            className="input_field"
+            type="number"
+            step="0.01"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Сума"
+            required
+          />
+          <div className="payment-methods">
+            {["Western Union", "MoneyGram"].map((method) => (
+              <label key={method}>
+                <input
+                  type="radio"
+                  value={method}
+                  checked={paymentMethod === method}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />{" "}
+                {method}
+              </label>
+            ))}
+          </div>
+        </div>
+        <button type="submit" className="continue-button">
+          Відправити
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default SendPage;
+
+// Файл ReceivePage Date 08.06.24 version-3
+import React, { useState, useContext } from "react";
+import {
+  generateTransactionId,
+  // updateTransactionStatus,
+  confirmTransaction,
+} from "../../AuthActions";
+import { AuthContext } from "../../AuthContext";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+const ReceivePage = () => {
+  const [email, setEmail] = useState("");
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Western Union");
+  const [isReceiving, setIsReceiving] = useState(false);
+  const { user, users, transactions, dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [transactionId, setTransactionId] = useState("");
+
+  const handleReceive = async (event) => {
+    event.preventDefault();
+    console.log("Handling receive...", transactions); // Log receive attempt
+    if (isReceiving) return;
+    setIsReceiving(true);
+
+    if (!email || email === user.email) {
+      alert("Недопустиме ім'я відправника");
+      setIsReceiving(false);
+      return;
+    }
+
+    const sender = users.find((u) => u.email === email);
+    if (!sender) {
+      alert("Sender email not found in the database.");
+      setIsReceiving(false);
+      return;
+    }
+
+    const transactionAmount = parseFloat(amount);
+    const correspondingSendTransaction = transactions.find(
+      
+      (tran) =>
+        tran.transactionId === parseInt(transactionId) &&
+        tran.from === email &&
+        tran.to === user.email &&
+        tran.amount === transactionAmount &&
+        tran.paymentMethod === paymentMethod &&
+        tran.type === "send"
+    );
+
+    if (
+      !correspondingSendTransaction ||
+      !correspondingSendTransaction.isPending //add 17.06.24-12:03
+    ) {
+      alert("No corresponding send transaction found.");
+      setIsReceiving(false);
+      return;
+    }
+    // Update the transaction status to confirmed, add DATE-10.06.24. version-1
+    // replacement updateTransactionStatus for confirmTransaction
+    // Confirm the transaction
+    confirmTransaction(correspondingSendTransaction.transactionId, dispatch);
+
+    const transaction = {
+      transactionId: generateTransactionId(),
+      time: new Date().toISOString(),
+      amount: transactionAmount,
+      from: email,
+      to: user.email,
+      type: "receive",
+      paymentMethod,
+      isPending: false,
+    };
+
+    console.log("Attempting to receive transaction:", transaction);
+
+    dispatch({
+      type: "ADD_TRANSACTION",
+      payload: transaction,
+    });
+
+    dispatch({
+      type: "ADD_EVENT",
+      payload: {
+        title: "Receive Money",
+        info: `Отримання $${transaction.amount} від ${transaction.paymentMethod} о ${transaction.time}`,
+      },
+    });
+
+    console.log("Dispatched RECEIVE transaction:", transaction);
+
+    navigate("/balance");
+    setIsReceiving(false);
+  };
+
+  return (
+    <div className="default-container">
+      <h2>Ви увійшли як {user ? `${user.email}` : "Guest"}</h2>
+      <Link to="/balance" className="nav_back-button">
+        Назад
+      </Link>
+      <h1>Отримати кошти</h1>
+      <form onSubmit={handleReceive}>
+        <div className="input_field-container">
+          <input
+            className="input_field"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email відправника"
+            required
+          />
+          <input
+            className="input_field"
+            type="number"
+            step="0.01"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Вкажіть суму"
+            required
+          />
+          <input //add DATE-10.06.24. version-1
+            className="input_field"
+            type="text"
+            value={transactionId}
+            onChange={(e) => setTransactionId(e.target.value)}
+            placeholder="ID транзакції"
+            required
+          />
+          <div className="payment-methods">
+            {["Western Union", "MoneyGram"].map((method) => (
+              <label key={method}>
+                <input
+                  type="radio"
+                  value={method}
+                  checked={paymentMethod === method}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                {method}
+              </label>
+            ))}
+          </div>
+        </div>
+        <button type="submit" className="continue-button">
+          Одержати
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default ReceivePage;
+
+// Файл transactions.js (компонент) DATE-12.06.24-0:22 version-3
+export const handleAddTransaction = (state, transaction) => {
+  console.log("Handling transaction:", transaction); // Log the transaction
+
+  if (
+    !transaction.transactionId ||
+    !transaction.type ||
+    !transaction.from ||
+    !transaction.to ||
+    !transaction.paymentMethod
+  ) {
+    console.error("Invalid transaction data:", transaction);
+    return state;
+  }
+
+  const updatedTransactions = [...state.transactions, transaction];
+
+  const updatedUsers = state.users.map((user) => {
+    if (user.email === transaction.from && transaction.type === "send") {
+      console.log(
+        `Updating balance for ${user.email}: subtracting ${transaction.amount}`
+      );
+      return { ...user, balance: (user.balance || 0) - transaction.amount };
+    } 
+    if (user.email === transaction.to && transaction.type === "receive") {
+      console.log(
+        `Updating balance for ${user.email}: adding ${transaction.amount}`
+      );
+      return { ...user, balance: (user.balance || 0) + transaction.amount };
+    }
+    return user;
+  });
+
+  return {
+    ...state,
+    transactions: updatedTransactions,
+    users: updatedUsers,
+  };
+};
+
+export const handleUpdateTransactionStatus = (state, transactionId) => {
+  const updatedTransactions = state.transactions.map((trans) => {
+    if (trans.transactionId === transactionId) {
+      return { ...trans, isPending: false };
+    }
+    return trans;
+  });
+
+  const updatedUsers = state.users.map((user) => {
+    const trans = updatedTransactions.find(
+      (t) => t.transactionId === transactionId
+    );
+    if (trans && trans.type === "send" && user.email === trans.from) {
+      console.log(
+        `Updating balance for ${user.email}: subtracting ${trans.amount}`
+      );
+      return { ...user, balance: (user.balance || 0) - trans.amount };
+    } else if (trans && trans.type === "receive" && user.email === trans.to) {
+      console.log(`Updating balance for ${user.email}: adding ${trans.amount}`);
+      return { ...user, balance: (user.balance || 0) + trans.amount };
+    }
+    return user;
+  });
+
+  return {
+    ...state,
+    transactions: updatedTransactions,
+    users: updatedUsers,
+  };
+};
+
+// File: TransactionList.js add DATE-10.06.24 version-3
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../AuthContext"; // Adjust the path accordingly
+
+const TransactionList = () => {
+  const { user, transactions } = useContext(AuthContext);
+
+  // Filter transactions specific to the logged in user
+  const filteredTransactions = transactions.filter(
+    (t) =>
+      (t.from === user.email && t.type === "send") ||
+      (t.to === user.email && t.type === "receive")
+  );
+
+  return (
+    <div className="transaction-list">
+      <h2>Transaction History</h2>
+      <ul
+        style={{
+          maxHeight: "400px",
+          overflowY: "scroll" /* enable scroll */,
+          padding: 0,
+        }}
+      >
+        {filteredTransactions.length > 0 ? (
+          filteredTransactions.map((transaction) => (
+            <li
+              key={transaction.transactionId}
+              className={`transaction-item ${
+                transaction.isPending ? "pending" : ""
+              }`}
+              style={{
+                border: `3px solid ${
+                  transaction.type === "send" ? "orange" : "lightgreen"
+                }` /* Styled border based on transaction type */,
+                marginBottom: "10px",
+                padding: "10px",
+              }}
+            >
+              <Link to={`/transaction/${transaction.transactionId}`}>
+                <div>
+                  <strong>ID:</strong> {transaction.transactionId}
+                  <br />
+                  <strong>Date:</strong>{" "}
+                  {new Date(transaction.time).toLocaleString()}
+                  <br />
+                  <strong>Type:</strong> {transaction.type}
+                  <br />
+                  <strong>Amount:</strong> ${transaction.amount}
+                  <br />
+                  <strong>From:</strong> {transaction.from}
+                  <br />
+                  <strong>To:</strong> {transaction.to}
+                  <br />
+                  <strong>Method:</strong> {transaction.paymentMethod}
+                  <br />
+                  <strong>Status:</strong>{" "}
+                  {transaction.isPending ? "Pending" : "Completed"}
+                </div>
+              </Link>
+            </li>
+          ))
+        ) : (
+          <li>No transactions found.</li>
+        )}
+      </ul>
+    </div>
+  );
+};
+
+export default TransactionList;

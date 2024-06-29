@@ -17,7 +17,7 @@
   color: white;
 }
 
-.background-container {
+.welcome-background-container {
   width: 393px;
   height: 583px;
   background: url('../../../public/background-1.png') no-repeat center center;
@@ -26,14 +26,28 @@
   border-bottom-right-radius: 20px;
 }
 
-h1 {
-  margin-top: 100px;
-  font-size: 42px;
+.welcome-heading-block {
+  display: flex;
+  flex-direction: column;
+  margin-top: 55px;
+  gap: 16px;
+
 }
 
-p {
-  margin-top: 20px;
+.hello-text {
+  font-size: 42px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
 }
+
+.welcome-text {
+  /* margin: 16px; */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+
+}
+
+/* p {
+  margin-top: 20px;
+} */
 
 .welcome-image {
   margin-top: 20px;
@@ -44,7 +58,7 @@ p {
   pointer-events: none;
 }
 
-.button-container {
+.wellcome-button-container {
   display: grid;
   gap: 10px;
   margin-top: auto;

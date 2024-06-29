@@ -1,26 +1,43 @@
 //Файл WellcomePage
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import "../WellcomePage/style.css";
-// import "../../index.css";
+import { AuthContext } from "../../AuthContext";
 
 function WellcomePage() {
+  const { dispatch } = useContext(AuthContext);
+
+  const handleClearUsers = () => {
+    dispatch({ type: "CLEAR_USERS" });
+  };
   return (
-    <div className="welcome-container">
+    <div className="welcome-container jost-font-text">
       <div className="welcome-image">
         <img src="/bitcoin-bank.png" alt="Вітаємо" />
       </div>
-      <div className="background-container">
-        <h1>Hello!</h1>
-        <p>Ласкаво просимо до банківського додатку</p>
+      <div className="welcome-background-container">
+        <div className="Status-Bar-Box">
+          {/* <img
+            className="Status-Bar"
+            src="svg/Status-Bar-White.svg"
+            alt="icon-enter"
+          /> */}
+        </div>
+        <div className="welcome-heading-block">
+          <div className="hello-text">Hello!</div>
+          <h2 className="welcome-text">Welcome to bank app</h2>
+        </div>
       </div>
-      <div className="button-container">
+      <div className="wellcome-button-container">
         <Link to="/signup" className="register-button">
-          Реєстрація
+          Sign Up
         </Link>
         <Link to="/signin" className="login-button">
-          Вхід
+          Sign In
         </Link>
+        <button onClick={handleClearUsers} className="clear-button">
+          Очистити список
+        </button>
       </div>
     </div>
   );

@@ -1,0 +1,19 @@
+.title-flex-container {
+  display: flex;
+  align-items: center;
+  /* margin: 10px 0; */
+}
+
+.title-left-column {
+  flex: 1;
+}
+
+.title-center-column {
+  text-align: center;
+  width: 303px;
+}
+
+.title-right-column {
+  flex: 1;
+  width: 25px;
+}

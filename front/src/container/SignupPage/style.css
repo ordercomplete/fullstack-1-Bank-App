@@ -60,3 +60,26 @@ p {
   top: 40px;
   left: 30px;
 } */
+
+/* .password-input {
+  position: relative;
+}
+
+input[type="password"] {
+  padding-right: 36px;
+}
+
+.password-visibility-button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.password-visibility-button.active {
+  color: #007bff;
+  
+} */

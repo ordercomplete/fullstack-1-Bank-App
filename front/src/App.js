@@ -1,26 +1,8 @@
-// На цей момент є проблема зберігання користувачів, треба знати та виправити проблему.
-// Також з'явилося багато помилок після останньої твоєї модернізації. Знайди неузгодження
-
-// Наступна рекомендація від чату GPT, але вона суперечлива, тому що у завданні у нас стоїть мета
-// підтвердити акаунт що може зробити користувач, який вже увійшов в акаунт:
-// "Переконайтеся, що PrivateRoute використовується тільки для захищених ресурсів,
-// куди доступ мають тільки підтверджені користувачі.
-// Ця логіка не повинна застосовуватися до самої сторінки signup-confirm,
-// оскільки це може призвести до постійного циклу перенаправлення,
-// якщо сторінка signup-confirm також захищена через PrivateRoute."
-
-// Створи файли AuthRoute, AuthContext, SignupPage, SignupConfirmPage, BalancePage враховуючи умови, вказані в коментарях файлу App.js для створення процесів на цих сторінках.
-// import { ErrorBoundary } from "./component/ErrorBoundary";
-// Якщо узагальнити завдання:
-// 1. Потрібно, щоб після введення логіна та пароля на сторінці реєстрації SignupPage
-// (у разі, якщо такого користувача ще не було створено раніше, якщо він існує треба сповістити про наявність такого користувача) створювався код перевірки,
-// який з'являвся у вікні alert, після чого відбувався перехід на сторінку SignupConfirmPage,
-// де буде потрібно ввести цей код і після успішного введення та натискання кнопки "продовжити"
-// відбувався перехід на сторінку BalancePage path="/balance"
-// 2. const authContextData = {}; -  Визначте відповідну структуру або надайте відповідні дані. Де повинна бути ця змінна, в якому файлі?
-
 //Файл App.js
 import React from "react";
+
+//Такий імпорт шрифтів не працює!!!
+// import "./fonts/Jost/Jost-Italic-VariableFont_wght.ttf";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./PrivateRoute";
@@ -32,8 +14,6 @@ import { RecoveryConfirmPage } from "./container/RecoveryConfirmPage";
 import { RecoveryPage } from "./container/RecoveryPage";
 import { DeleteAccountPage } from "./container/DeleteAccountPage";
 import { UsersPage } from "./container/UsersPage";
-// import { AuthContext } from "./AuthContext";
-
 import AuthRoute from "./AuthRoute";
 import WellcomePage from "./container/WellcomePage";
 import SendPage from "./container/SendPage";
@@ -42,8 +22,8 @@ import BalancePage from "./container/BalancePage";
 import NotificationsPage from "./container/NotificationsPage";
 import SettingsPage from "./container/SettingsPage";
 import ReceivePage from "./container/ReceivePage";
-
 import Error from "./container/ErrorPage";
+import UserDataPage from "./container/UserDataPage";
 
 function App() {
   // const authContextData = {}; // Визначити відповідну структуру або надайти відповідні дані
@@ -127,9 +107,9 @@ function App() {
           <Route
             path="/delete-account"
             element={
-              <AuthRoute>
+              <PrivateRoute>
                 <DeleteAccountPage />
-              </AuthRoute>
+              </PrivateRoute>
             }
           />
           <Route
@@ -213,6 +193,14 @@ function App() {
             element={
               <PrivateRoute>
                 <UsersPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user-data/:userId" // Новостворений маршрут для сторінки користувачів
+            element={
+              <PrivateRoute>
+                <UserDataPage />
               </PrivateRoute>
             }
           />
