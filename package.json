@@ -7,15 +7,20 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "node test.js"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "ejs": "^3.1.9",
     "express": "^4.15.2"
   },
   "devDependencies": {
-    "tape": "^5.7.4"
+    "tape": "^5.7.4",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   },
   "repository": {
     "type": "git",
