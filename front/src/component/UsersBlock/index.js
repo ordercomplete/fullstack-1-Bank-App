@@ -1,29 +1,21 @@
+//file UsersBlock
 import React from "react";
 import { Link } from "react-router-dom";
 import "./style.css";
+import users_black from "../../IconsSvg/users_black.svg";
 
 export const UsersBlock = ({ user }) => {
+  const isAdmin = user && user.email === "admin@admin" && user.isAdmin;
   return (
-    <div className="users-block">
-      <h4 className="current-user">
-        <span>
-          <img
-            className="icon-enter"
-            src="loginIcons/log-in_black.svg"
-            alt="icon-enter"
-          />
-        </span>
-        <span> </span>
+    <div className={`users-block ${isAdmin ? "" : "non-admin"}`}>
+      <h6 className="current-user">
         <span>{user ? `${user.email}` : "Guest"}</span>
-      </h4>
+      </h6>
+
       <h4 className="userslist">
-        {user && user.email === "admin@admin" && user.isAdmin && (
+        {isAdmin && (
           <Link to="/users" className="users-icon-link">
-            <img
-              className="icon-enter"
-              src="loginIcons/users_black.svg"
-              alt="icon-enter"
-            />
+            <img className="icon-enter" src={users_black} alt="icon-enter" />
           </Link>
         )}
       </h4>

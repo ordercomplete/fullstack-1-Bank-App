@@ -1,84 +1,5 @@
-//Файл PasswordInput
-// import React, { useState } from "react";
-// import "./style.css";
-
-// export const PasswordInput = ({ value, onChange, placeholder }) => {
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   const togglePasswordVisibility = () => {
-//     setShowPassword((prevState) => !prevState);
-//   };
-
-//   return (
-//     <div className="password-input-container">
-//       <input
-//         className="input_field"
-//         type={showPassword ? "text" : "password"}
-//         value={value}
-//         onChange={onChange}
-//         placeholder={placeholder}
-//         required
-//       />
-//       <button
-//         type="button"
-//         className={`password-visibility-button ${showPassword ? "active" : ""}`}
-//         onClick={togglePasswordVisibility}
-//       >
-//         {showPassword ? "🙈" : "👁️‍🗨️"}
-//       </button>
-//     </div>
-//   );
-// };
-// export default PasswordInput;
-
-//Файл PasswordInput
-// import React, { useState } from "react";
-// import "./style.css";
-
-// export const PasswordInput = ({
-//   name,
-//   value,
-//   onChange,
-//   placeholder,
-//   type = "password",
-// }) => {
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   const togglePasswordVisibility = () => {
-//     setShowPassword((prevState) => !prevState);
-//   };
-
-//   return (
-//     <div className="password-input-container">
-//       <input
-//         className="input_field"
-//         type={showPassword && type === "password" ? "text" : type}
-//         name={name}
-//         value={value}
-//         onChange={onChange}
-//         placeholder={placeholder}
-//         required
-//       />
-//       {type === "password" && (
-//         <button
-//           type="button"
-//           className={`password-visibility-button ${
-//             showPassword ? "active" : ""
-//           }`}
-//           onClick={togglePasswordVisibility}
-//         >
-//           {showPassword ? "🙈" : "👁️‍🗨️"}
-//         </button>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default PasswordInput;
-
-//Файл PasswordInput
 import React, { useState } from "react";
-import "./style.css";
+import "./style.css"; // Імпорт стилів для компоненту
 
 const PasswordInput = ({
   name,
@@ -88,53 +9,42 @@ const PasswordInput = ({
   type = "password",
   className = "",
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isTemporarilyVisible, setIsTemporarilyVisible] = useState(false);
-  const [timer, setTimer] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // Хук для відображення/приховування пароля
 
   const togglePasswordVisibility = () => {
-    setShowPassword((prevState) => !prevState);
+    setShowPassword((prevState) => !prevState); // Перемикання видимості пароля
   };
 
   const handleChange = (e) => {
-    if (type === "password") {
-      // Очистка попереднього таймера, якщо він існує
-      if (timer) {
-        clearTimeout(timer);
-      }
-
-      // Тимчасове відображення символів
-      setIsTemporarilyVisible(true);
-      setTimer(
-        setTimeout(() => {
-          setIsTemporarilyVisible(false);
-        }, 2000)
-      );
+    if (typeof onChange === "function") {
+      onChange(e); // Виклик функції onChange, щоб передати зміни далі
     }
-    onChange(e);
   };
 
   return (
     <div className="password-input-container">
       <input
-        className={`input_field ${className}`}
-        type={showPassword || isTemporarilyVisible ? "text" : type}
+        className={`input_field ${className}`} // Композиція класів для стилів
+        type={showPassword ? "text" : type} // Визначення типу поля, якщо пароль видимий
         name={name}
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        required
+        required // Поле є обов'язковим
       />
       {type === "password" && (
-        <button
-          type="button"
+        <a
+          href="#"
           className={`password-visibility-button ${
             showPassword ? "active" : ""
-          }`}
-          onClick={togglePasswordVisibility}
+          }`} // Кнопка для перемикання видимості пароля
+          onClick={(e) => {
+            e.preventDefault(); // Відміна стандартної поведінки посилання
+            togglePasswordVisibility(); // Перемикання видимості пароля
+          }}
         >
-          {showPassword ? "🙈" : "👁️‍🗨️"}
-        </button>
+          {showPassword ? "🙈" : "👁️"}
+        </a>
       )}
     </div>
   );

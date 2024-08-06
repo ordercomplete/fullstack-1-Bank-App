@@ -5,16 +5,16 @@ import React from "react";
 // import "./fonts/Jost/Jost-Italic-VariableFont_wght.ttf";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { PrivateRoute } from "./PrivateRoute";
+import { PrivateRoute } from "./modul/PrivateRoute";
 import { SigninPage } from "./container/SigninPage";
 import { SignupPage } from "./container/SignupPage";
-import { AuthProvider } from "./AuthContext";
+import { AuthProvider } from "./modul/AuthContext";
 import { SignupConfirmPage } from "./container/SignupConfirmPage";
 import { RecoveryConfirmPage } from "./container/RecoveryConfirmPage";
 import { RecoveryPage } from "./container/RecoveryPage";
 import { DeleteAccountPage } from "./container/DeleteAccountPage";
 import { UsersPage } from "./container/UsersPage";
-import AuthRoute from "./AuthRoute";
+import AuthRoute from "./modul/AuthRoute";
 import WellcomePage from "./container/WellcomePage";
 import SendPage from "./container/SendPage";
 import TransactionPage from "./container/TransactionPage";
@@ -23,14 +23,14 @@ import NotificationsPage from "./container/NotificationsPage";
 import SettingsPage from "./container/SettingsPage";
 import ReceivePage from "./container/ReceivePage";
 import Error from "./container/ErrorPage";
-import UserDataPage from "./container/UserDataPage";
+import UserTransactionsPage from "./container/UserTransactionsPage";
+import UserNotificationsPage from "./container/UserNotificationsPage";
+import SettingsPageAdmin from "./container/SettingsPageAdmin";
 
 function App() {
-  // const authContextData = {}; // Визначити відповідну структуру або надайти відповідні дані
-
   return (
     <AuthProvider>
-      {/* AuthContext.Provider value={authContextData} Створюємо контекст, в якому будемо тримати дані аутентифікації
+      {/* AuthContext.Provider Створюємо контекст, в якому будемо тримати дані аутентифікації
       В контексті буде знаходитись: створений state через useReducer, 
       який буде знаходитись властивість token та об'єкт user dispatch функція, 
       яка буде мати наступні типи дій: увійти в акаунт, вийти з акаунту */}
@@ -43,20 +43,29 @@ function App() {
                 {/* AuthRoute це компонент, який перевіряє, чи є в контексті аутентифікації токен, 
                 якщо так, то переводить на сторінку /balance */}
                 <WellcomePage />
-                {/* <WellcomePage /> На цій сторінці ми створюємо верстку та розміщуємо дві кнопки-посилання 
+                {/* WellcomePage На цій сторінці ми створюємо верстку та розміщуємо дві кнопки-посилання 
                 на сторінку /signup та сторінку /signin */}
               </AuthRoute>
             }
           />
 
-          {/* <Route path="/balance" element={<BalancePage />} />
-          <Route path="/settings" element={<SettingsPage />} /> */}
+          <Route
+            path="/settings-admin"
+            element={
+              <AuthRoute>
+                <SettingsPageAdmin />
+                {/* SignupPage На цій сторінці створюємо форму, яка відправляє запит на реєстрацію користувача 
+                та переводить на сторінку /signup-comfirm.
+                Після реєстрації потрібно зберегти дані аутентифікації в контекст */}
+              </AuthRoute>
+            }
+          />
           <Route
             path="/signup"
             element={
               <AuthRoute>
                 <SignupPage />
-                {/* <SignupPage /> На цій сторінці створюємо форму, яка відправляє запит на реєстрацію користувача 
+                {/* SignupPage На цій сторінці створюємо форму, яка відправляє запит на реєстрацію користувача 
                 та переводить на сторінку /signup-comfirm.
                 Після реєстрації потрібно зберегти дані аутентифікації в контекст */}
               </AuthRoute>
@@ -69,7 +78,7 @@ function App() {
                 {/* На сторінці /signup-confirm використовуємо PrivateRoute, адже підтвердити акаунт може користувач, який вже увійшов в акаунт 
                 Після підтвердження акаунту потрібно оновити дані аутентифікації в контексті */}
                 {<SignupConfirmPage />}
-                {/* <SignupConfirmPage /> На цій сторінці вводимо код підтвердження реєстрації акаунта та після успішного запиту переводимо на сторінку /balance 
+                {/* SignupConfirmPage На цій сторінці вводимо код підтвердження реєстрації акаунта та після успішного запиту переводимо на сторінку /balance 
                 Перевіряємо в контексті аутентифікації чи user.confirm. Якщо так, то переводимо на сторінку /balance */}
               </PrivateRoute>
             }
@@ -89,7 +98,7 @@ function App() {
             element={
               <AuthRoute>
                 <RecoveryPage />
-                {/* <RecoveryPage /> Сторінка відновлення акаунту. 
+                {/* RecoveryPage Сторінка відновлення акаунту. 
                 Після вводу пошти, створюється код з підтвердженням відновлення акаунту, 
                 переводимо на сторінку /recovery-confirm */}
               </AuthRoute>
@@ -100,7 +109,7 @@ function App() {
             element={
               <AuthRoute>
                 <RecoveryConfirmPage />
-                {/* <RecoveryConfirmPage /> Сторінка підтвердження відновлення та оновлення пароля.  Після відправки форми потрібно перевести на сторінку /balance */}
+                {/* RecoveryConfirmPage Сторінка підтвердження відновлення та оновлення пароля.  Після відправки форми потрібно перевести на сторінку /balance */}
               </AuthRoute>
             }
           />
@@ -121,7 +130,7 @@ function App() {
                 повинні передавати токен (будь-яким варіантом) на сервер для перевірки токена 
                 та отримання інформації що за користувач відправляє дані та передати конкретно його дані */}
                 <BalancePage />
-                {/* <BalancePage /> Сторінка балансу */}
+                {/* BalancePage Сторінка балансу */}
               </PrivateRoute>
             }
           />
@@ -130,7 +139,9 @@ function App() {
             element={
               <PrivateRoute>
                 <NotificationsPage />
-                {/* <NotificationsPage /> Сторінка списку нотифікацій, який створюються при діях:
+                {/* NotificationsPage Сторінка списку нотифікацій, який створюються при діях:
+                Створення акаунту
+                Видалення акаунту
                 Вхід в акаунт
                 Відновлення акаунту
                 Зміна пароля
@@ -145,7 +156,7 @@ function App() {
             element={
               <PrivateRoute>
                 <SettingsPage />
-                {/* <SettingsPage /> Сторінка налаштувань, на якій можна:
+                {/* SettingsPage Сторінка налаштувань, на якій можна:
                 Змінити пароль
                 Змінити пошту
                 Вийти з акаунту
@@ -158,7 +169,7 @@ function App() {
             element={
               <PrivateRoute>
                 <ReceivePage />
-                {/* <ReceivePage /> Сторінка поповнення балансу. 
+                {/* ReceivePage Сторінка поповнення балансу. 
                 Користувач вводить суму, натискає на платіжний метод і відправляється запит. 
                 Після чого створюється нова транзакція та нова нотифікація */}
               </PrivateRoute>
@@ -169,7 +180,7 @@ function App() {
             element={
               <PrivateRoute>
                 <SendPage />
-                {/* <SendPage /> Користувач вводить пошту та суму. 
+                {/* SendPage  Користувач вводить пошту та суму. 
                 Після чого у користувача, який відправив суму, 
                 створюється транзакція на списання грошей на нотифікацію, а у користувача, який отримав гроші, 
                 створюється транзакція на отримання грошей та нотифікацію */}
@@ -181,7 +192,7 @@ function App() {
             element={
               <PrivateRoute>
                 <TransactionPage />
-                {/* <TransactionPage /> Сторінка з детальною інформацією про конкретну транзакцію. 
+                {/* TransactionPage Сторінка з детальною інформацією про конкретну транзакцію. 
                 В сторінці є trainsactionId, який вказує на ідентифікатор транзакції, 
                 який використовується для отримання та виводи інформації про конкретну транзакцію. 
                 Перехід на цю сторінку здійснюється через натискання на карточку транзакції на сторінці /balance */}
@@ -197,10 +208,18 @@ function App() {
             }
           />
           <Route
-            path="/user-data/:userId" // Новостворений маршрут для сторінки користувачів
+            path="/user-transactions/:userId" //  маршрут для сторінки транзакцій користувачів
             element={
               <PrivateRoute>
-                <UserDataPage />
+                <UserTransactionsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user-notifications/:userId" // маршрут для сторінки нотифікацій користувачів
+            element={
+              <PrivateRoute>
+                <UserNotificationsPage />
               </PrivateRoute>
             }
           />
@@ -208,6 +227,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    // </SafeAreaProvider>
   );
 }
 

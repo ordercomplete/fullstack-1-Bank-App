@@ -1,43 +1,42 @@
 //Файл WellcomePage
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import "../WellcomePage/style.css";
-import { AuthContext } from "../../AuthContext";
+import StatusBarColorChanger from "../../modul/StatusBarColorChanger";
+import settingsSvg from "../../IconsSvg/settings.svg";
 
-function WellcomePage() {
-  const { dispatch } = useContext(AuthContext);
-
-  const handleClearUsers = () => {
-    dispatch({ type: "CLEAR_USERS" });
-  };
+export function WellcomePage() {
   return (
     <div className="welcome-container jost-font-text">
-      <div className="welcome-image">
-        <img src="/bitcoin-bank.png" alt="Вітаємо" />
-      </div>
+      <StatusBarColorChanger color="#5734E0" />
       <div className="welcome-background-container">
-        <div className="Status-Bar-Box">
-          {/* <img
-            className="Status-Bar"
-            src="svg/Status-Bar-White.svg"
-            alt="icon-enter"
-          /> */}
+        <div className="wellcome-icons-block">
+          <Link to="/settings-admin" className="welcome-settings-icon-link">
+            <img src={settingsSvg} alt="Settings" />
+          </Link>
         </div>
+
         <div className="welcome-heading-block">
           <div className="hello-text">Hello!</div>
           <h2 className="welcome-text">Welcome to bank app</h2>
+          <h3 className="welcome-text-ticker">
+            {/* Рухомий рядок */}
+            <span className="marquee">
+              The safest cryptobank is the guarantee of your peace of mind
+            </span>
+          </h3>
         </div>
       </div>
-      <div className="wellcome-button-container">
+      <div className="welcome-image-box">
+        <div className="welcome-image"></div>
+      </div>
+      <div className="wellcome-button-container navigation-bar">
         <Link to="/signup" className="register-button">
           Sign Up
         </Link>
         <Link to="/signin" className="login-button">
           Sign In
         </Link>
-        <button onClick={handleClearUsers} className="clear-button">
-          Очистити список
-        </button>
       </div>
     </div>
   );

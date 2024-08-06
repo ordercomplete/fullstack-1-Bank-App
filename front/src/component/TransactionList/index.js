@@ -1,180 +1,53 @@
-// File: TransactionList.js add DATE-10.06.24 version-1
-// import React, { useContext } from "react";
-// import { AuthContext } from "../../AuthContext";
-// import { Link } from "react-router-dom";
-// import transactions from "../../component/transactions"; //неузгоджене
-
-// // const TransactionList = () => {
-// //   const { transactions } = useContext(AuthContext);
-
-// //   return (
-// //     <div className="transaction-list">
-// //       <h2>Transaction History</h2>
-// //       <ul>
-// //         {transactions.length > 0 ? (
-// //           transactions.map((transaction) => (
-// //             <li key={transaction.transactionId} className="transaction-item">
-// //               <Link to={`/transaction/${transaction.transactionId}`}>
-// //                 <div>
-// //                   <strong>ID:</strong> {transaction.transactionId}
-// //                   <br />
-// //                   <strong>Date:</strong>{" "}
-// //                   {new Date(transaction.time).toLocaleString()}
-// //                   <br />
-// //                   <strong>Type:</strong> {transaction.type}
-// //                   <br />
-// //                   <strong>Amount:</strong> ${transaction.amount}
-// //                   <br />
-// //                   <strong>From:</strong> {transaction.from}
-// //                   <br />
-// //                   <strong>To:</strong> {transaction.to}
-// //                   <br />
-// //                   <strong>Method:</strong> {transaction.paymentMethod}
-// //                 </div>
-// //               </Link>
-// //             </li>
-// //           ))
-// //         ) : (
-// //           <li>No transactions found.</li>
-// //         )}
-// //       </ul>
-// //     </div>
-// //   );
-// // };
-// // add DATE-10.06.24 version-2
-// const TransactionList = ({ transactions }) => {
-//   return (
-//     <div className="transaction-list">
-//       <h2>Transaction History</h2>
-//       <ul>
-//         {transactions.length > 0 ? (
-//           transactions.map((transaction) => (
-//             <li
-//               key={transaction.transactionId}
-//               className={`transaction-item ${
-//                 transaction.isPending ? "pending" : ""
-//               }`}
-//             >
-//               <Link to={`/transaction/${transaction.transactionId}`}>
-//                 <div>
-//                   <strong>ID:</strong> {transaction.transactionId}
-//                   <br />
-//                   <strong>Date:</strong>{" "}
-//                   {new Date(transaction.time).toLocaleString()}
-//                   <br />
-//                   <strong>Type:</strong> {transaction.type}
-//                   <br />
-//                   <strong>Amount:</strong> ${transaction.amount}
-//                   <br />
-//                   <strong>From:</strong> {transaction.from}
-//                   <br />
-//                   <strong>To:</strong> {transaction.to}
-//                   <br />
-//                   <strong>Method:</strong> {transaction.paymentMethod}
-//                   <br />
-//                   <strong>Status:</strong>{" "}
-//                   {transaction.isPending ? "Pending" : "Completed"}
-//                 </div>
-//               </Link>
-//             </li>
-//           ))
-//         ) : (
-//           <li>No transactions found.</li>
-//         )}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default TransactionList;
-
-// // Файл: TransactionList.js add DATE-10.06.24 version-3
-// import React, { useContext } from "react";
-// import { Link } from "react-router-dom";
-// import { AuthContext } from "../../AuthContext"; // Adjust the path accordingly
-
-// const TransactionList = () => {
-//   const { user, transactions } = useContext(AuthContext);
-
-//   // Filter transactions specific to the logged in user
-//   const filteredTransactions = transactions.filter(
-//     (t) =>
-//       (t.from === user.email && t.type === "send") ||
-//       (t.to === user.email && t.type === "receive")
-//   );
-
-//   return (
-//     <div className="transaction-list">
-//       <h2>Transaction History</h2>
-//       <ul
-//         style={{
-//           maxHeight: "400px",
-//           overflowY: "scroll" /* enable scroll */,
-//           padding: 0,
-//         }}
-//       >
-//         {filteredTransactions.length > 0 ? (
-//           filteredTransactions.map((transaction) => (
-//             <li
-//               key={transaction.transactionId}
-//               className={`transaction-item ${
-//                 transaction.isPending ? "pending" : ""
-//               }`}
-//               style={{
-//                 border: `3px solid ${
-//                   transaction.type === "send" ? "orange" : "lightgreen"
-//                 }` /* Styled border based on transaction type */,
-//                 marginBottom: "10px",
-//                 padding: "10px",
-//               }}
-//             >
-//               <Link to={`/transaction/${transaction.transactionId}`}>
-//                 <div>
-//                   <strong>ID:</strong> {transaction.transactionId}
-//                   <br />
-//                   <strong>Date:</strong>{" "}
-//                   {new Date(transaction.time).toLocaleString()}
-//                   <br />
-//                   <strong>Type:</strong> {transaction.type}
-//                   <br />
-//                   <strong>Amount:</strong> ${transaction.amount}
-//                   <br />
-//                   <strong>From:</strong> {transaction.from}
-//                   <br />
-//                   <strong>To:</strong> {transaction.to}
-//                   <br />
-//                   <strong>Method:</strong> {transaction.paymentMethod}
-//                   <br />
-//                   <strong>Status:</strong>{" "}
-//                   {transaction.isPending ? "Pending" : "Completed"}
-//                 </div>
-//               </Link>
-//             </li>
-//           ))
-//         ) : (
-//           <li>No transactions found.</li>
-//         )}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default TransactionList;
-
-// Файл: TransactionList.js
+//file TransactionList
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../AuthContext";
-import "./style.css"; // Імпортуйте файл стилів
+import { AuthContext } from "../../modul/AuthContext";
+import transNotPending from "../../IconsSvg/transNotPending.svg";
+import transSend from "../../IconsSvg/transSend.svg";
+import transReceive from "../../IconsSvg/transReceive.svg";
+import "./style.css";
 
-const TransactionList = () => {
-  const { user, transactions: initialTransactions } = useContext(AuthContext);
-  const [transactions, setTransactions] = useState(initialTransactions);
+const TransactionList = ({ transactions: propTransactions }) => {
+  const { user } = useContext(AuthContext);
+  const [transactions, setTransactions] = useState([]);
+  const [filter, setFilter] = useState("time"); // Новий стан для фільтра
 
-  // Utility function for time elapsed
+  // Оновлюємо час для кожної транзакції кожні 5 секунд
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTransactions((prevTransactions) =>
+        prevTransactions.map((transaction) => ({
+          ...transaction,
+          timeElapsed: timeElapsed(transaction.time),
+        }))
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Фільтруємо та сортуємо транзакції при зміні пропсів транзакцій або користувача
+  useEffect(() => {
+    let filteredTransactions;
+
+    if (user.isAdmin) {
+      // Якщо користувач адмін, тоді показуємо всі транзакції
+      filteredTransactions = propTransactions;
+    } else {
+      // Якщо користувач не є адміном, фільтруємо транзакції поточного користувача
+      filteredTransactions = propTransactions.filter(
+        (transaction) =>
+          (transaction.from === user.email && transaction.type === "send") ||
+          (transaction.to === user.email && transaction.type === "receive")
+      );
+    }
+
+    setTransactions(filteredTransactions);
+  }, [propTransactions, user, filter]);
+
   const timeElapsed = (timestamp) => {
     const now = Date.now();
-    const diff = (now - new Date(timestamp).getTime()) / 1000; // difference in seconds
+    const diff = (now - new Date(timestamp).getTime()) / 1000;
 
     if (diff < 3600) {
       const minutes = Math.floor(diff / 60);
@@ -187,79 +60,86 @@ const TransactionList = () => {
       return `${days} days ago`;
     }
   };
-  // Using useEffect to calculate and update time for each transaction
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTransactions(
-        transactions.map((transaction) => ({
-          ...transaction,
-          timeElapsed: timeElapsed(transaction.time),
-        }))
-      );
-    }, 60000); // Update every minute
-
-    return () => clearInterval(interval);
-  }, [transactions]);
-
-  // Фільтруємо транзакції, які відносяться до зареєстрованого користувача
-  const filteredTransactions = transactions.filter(
-    (t) =>
-      (t.from === user.email && t.type === "send") ||
-      (t.to === user.email && t.type === "receive")
-  );
 
   return (
-    <div className="transaction-container ">
-      {/* <h2>Transaction History</h2> */}
+    <div className="transaction-container">
       <div className="transaction-list">
-        {filteredTransactions.length > 0 ? (
-          filteredTransactions.map((transaction) => (
-            <div key={transaction.transactionId}>
+        {transactions.length > 0 ? (
+          transactions.map((transaction, index) => (
+            <div key={`${transaction.transactionId}-${index}`}>
               <Link to={`/transaction/${transaction.transactionId}`}>
                 <div className="transaction-item">
                   <div className="transaction-logo">
                     <img
-                      src={`/transIcons/${
-                        transaction.type === "send"
-                          ? "transSend.svg"
-                          : "transReseive.svg"
-                      }`}
-                      alt="Event logo"
+                      src={
+                        transaction.isPending
+                          ? transNotPending
+                          : transaction.type === "send"
+                          ? transSend
+                          : transReceive
+                      }
+                      alt="transaction-logo"
                     />
                   </div>
                   <div className="transaction-details">
                     <div className="transaction-title">
-                      <h3>
-                        {transaction.type.send
-                          ? transaction.from
-                          : transaction.to}
-                      </h3>
+                      <h6>
+                        {transaction.type === "send"
+                          ? `${transaction.type} to ${transaction.to}`
+                          : `${transaction.type} from ${transaction.from}`}
+                      </h6>
                     </div>
                     <div className="transaction-info">
-                      <h4>
-                        <span>{transaction.timeElapsed}</span>{" "}
-                        <span>{transaction.type}</span>
-                      </h4>
+                      <h6>
+                        {transaction.isPending && (
+                          <span className="unconfirmed">{"unconfirmed"} </span>
+                        )}
+
+                        <span>{transaction.timeElapsed}</span>
+                      </h6>
                     </div>
                   </div>
                   <div>
-                    <h3
+                    <h4
                       className={`transaction-amount ${
-                        transaction.type === "send"
+                        transaction.isPending
+                          ? "amount-grey"
+                          : transaction.type === "send"
                           ? "amount-black"
                           : "amount-green"
                       }`}
                     >
                       {transaction.type === "send" ? "-" : "+"}$
                       {transaction.amount.toFixed(2)}
-                    </h3>
+                    </h4>
                   </div>
                 </div>
               </Link>
             </div>
           ))
         ) : (
-          <div>No transactions found.</div>
+          <div className="text-no-transactions">
+            <h3 className="text-no-transactions--title">
+              Welcome to our cryptocurrency bank!
+            </h3>
+            <br />
+            <h6 className="text-no-transactions--text">
+              We are pleased to welcome you to the world of secure and
+              innovative financial solutions. Although your balance currently
+              shows no transactions, we look forward to helping you take full
+              advantage of our services.
+            </h6>
+            <br />
+            <h5>Our bank offers:</h5>
+            <br />
+            <h6 className="text-no-transactions--text">
+              High level of security for your cryptocurrency Convenient and fast
+              transactions Support for popular cryptocurrencies and fiat
+              currencies Expert advice and 24/7 customer support Start your
+              financial transactions with us today and discover new
+              opportunities for yourself!
+            </h6>
+          </div>
         )}
       </div>
     </div>

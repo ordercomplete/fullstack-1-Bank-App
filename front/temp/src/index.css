@@ -1,0 +1,350 @@
+@import url('./fonts/jost-fonts.css');
+
+body {
+  margin: 0;
+  font-family: 'Jost', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  background-color: rgb(172, 172, 172);
+}
+
+/* Додати до heroku */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.jost-font-text {
+  font-family: 'Jost';
+}
+
+
+/* Загальні стилі для контейнерів */
+
+.default-container {
+  /* padding-top: 60px;
+  background: no-repeat, white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 393px;
+  height: 852px;
+  border: 1px solid #775CE6;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; */
+  color: black;
+
+  /* Додати до heroku 07.07.2024 */
+  padding-top: 0;
+  /* Видалено відступ зверху */
+  background: white;
+  position: relative;
+  /* Змінено з absolute на relative */
+  top: 0;
+  /* Видалено зміщення по вертикалі */
+  left: 0;
+  /* Видалено зміщення по горизонталі */
+  transform: none;
+  /* Видалено трансформацію */
+  width: 100%;
+  /* Змінено ширину на 100% */
+  height: 100%;
+  /* Змінено висоту на 100% */
+  border: none;
+  /* Видалено рамку */
+  border-radius: 0;
+  /* Видалено закруглення кутів */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: auto;
+  /* Додано можливість прокручування */
+}
+
+.default-container-auth {
+
+  /* background: no-repeat, white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 393px;
+  height: 852px;
+  border: 1px solid #775CE6;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; */
+  color: black;
+
+  /* Додати до heroku 07.07.2024 */
+  padding-top: 0;
+  /* Видалено відступ зверху */
+  background: white;
+  position: relative;
+  /* Змінено з absolute на relative */
+  top: 0;
+  /* Видалено зміщення по вертикалі */
+  left: 0;
+  /* Видалено зміщення по горизонталі */
+  transform: none;
+  /* Видалено трансформацію */
+  width: 100%;
+  /* Змінено ширину на 100% */
+  height: 100%;
+  /* Змінено висоту на 100% */
+  border: none;
+  /* Видалено рамку */
+  border-radius: 0;
+  /* Видалено закруглення кутів */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: auto;
+  /* Додано можливість прокручування */
+}
+
+h1 {
+  font-size: 34px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+h4 {
+  font-size: 14px;
+}
+
+h5 {
+  font-size: 12px;
+}
+
+.Status-Bar-Box {
+  width: 393px;
+  min-height: 53px;
+  background-color: transparent;
+}
+
+/* .Status-Bar {
+  width: 393px;
+  height: 53px;
+} */
+
+.text-under-title {
+  color: gray;
+}
+
+
+/* Стилі для стрілки назад */
+.nav_back-button {
+  display: flex;
+  width: 25px;
+  align-items: start;
+}
+
+/* Стилі для полів вводу */
+.input_field-container {
+  padding: 10px;
+  display: grid;
+  gap: 15px;
+  margin: 8px 0;
+}
+
+.input_field-container label {
+  text-align: left;
+
+  height: 8px;
+}
+
+/* .label-error {
+  height: 16px;
+  color: red;
+  font-size: 10px;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 0px;
+} */
+
+/* Стилі для кнопок */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  /* display: grid; */
+  align-items: center;
+  gap: 10px;
+  /* margin-top: auto; */
+
+}
+
+.input_field {
+  color: black;
+  border: 1px solid #775CE6;
+  border-radius: 6px;
+  padding: 10px 20px;
+  background-color: white;
+  display: block;
+  width: 353px;
+  box-sizing: border-box;
+}
+
+/* Колір рамки при помилці червоний */
+.input_field.error {
+  border-color: red;
+  /* color: red; */
+
+}
+
+.input_field.error::placeholder {
+  color: red;
+  /* Колір placeholder червоний при помилці */
+}
+
+.button-container-divider {
+  width: 353px;
+  height: 2px;
+  background-color: rgb(197, 189, 189);
+  margin: 10px 0;
+}
+
+/* for the Copy Button */
+.copy-button {
+  padding: 5px 10px;
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.copy-button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.clear-button {}
+
+.continue-button,
+.register-button,
+.login-button,
+.settings-button,
+.delete-button {
+  width: 353px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: block;
+}
+
+.continue-button,
+.register-button,
+.login-button,
+.settings-button,
+.delete-button:hover {
+  background: lightgrey;
+}
+
+.register-button,
+.continue-button {
+  background: #775CE6;
+  color: white;
+}
+
+.settings-button {
+  background: white;
+  border: 1px solid #775CE6;
+  color: #775CE6;
+}
+
+.settings-button:hover {
+  color: white;
+  background: #775CE6;
+}
+
+.settings-button:active {
+  background: lightgrey;
+}
+
+.delete-button {
+  background: white;
+  border: 1px solid red;
+  color: red;
+}
+
+.delete-button:hover {
+  color: white;
+  background: red;
+}
+
+/* Стилі для активних кнопок */
+.register-button:active,
+.continue-button:active {
+  background: #9278F0;
+  /* Світліше відтінок #775CE6 */
+}
+
+
+
+
+
+/* .notifications-container {
+  overflow-y: auto;
+  max-height: 400px;
+  
+} */
+
+.password-input {
+  position: relative;
+}
+
+/* перевірити input[type="password"] */
+input[type="password"] {
+  padding-right: 36px;
+}
+
+.password-visibility-button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.password-visibility-button.active {
+  color: #007bff;
+  /* Колір для активного стану кнопки */
+}

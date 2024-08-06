@@ -1,12 +1,13 @@
 // Файл SettingsPage
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../AuthContext";
+import { AuthContext } from "../../modul/AuthContext";
 import { Link } from "react-router-dom";
-// import { NavigationLink } from "../../component/NavigationLink";
+
 import PasswordInput from "../../component/PasswordInput";
 import TitleComponent from "../../component/TitleComponent";
 import UsersBlock from "../../component/UsersBlock";
+// import "./style.css";
 
 export const SettingsPage = () => {
   const navigate = useNavigate();
@@ -33,9 +34,9 @@ export const SettingsPage = () => {
 
     let isError = false;
 
-    console.log("Поточний користувач:", user);
-    console.log("Всі користувачі:", users);
-    console.log("Введений новий email:", newEmail.value);
+    console.log("Current user:", user);
+    console.log("All users:", users);
+    console.log("New email entered:", newEmail.value);
 
     setNewEmailError(false);
     setPasswordForEmailError(false);
@@ -44,14 +45,14 @@ export const SettingsPage = () => {
 
     if (user && user.password === passwordForEmail) {
       if (user.email === newEmail.value) {
-        setEmailErrorMsg("Ви не можете змінити email на поточний");
+        setEmailErrorMsg("You cannot change the email to the current one");
         setNewEmailError(true);
         setNewEmail("");
         // isError = true;
         return;
       }
       if (users.find((u) => u.email === newEmail.value)) {
-        setEmailErrorMsg("Цей email вже зареєстрований");
+        setEmailErrorMsg("This email is already registered");
         setNewEmailError(true);
         setNewEmail("");
         // isError = true;
@@ -62,7 +63,7 @@ export const SettingsPage = () => {
           type: "UPDATE_USER_EMAIL",
           payload: { oldEmail: user.email, newEmail: newEmail.value },
         });
-        console.log("Email оновлено.");
+        console.log("Email updated.");
         setEmailErrorMsg("");
         setNewEmailError(false);
         setPasswordForEmailError(false);
@@ -79,9 +80,9 @@ export const SettingsPage = () => {
       }
     } else {
       setPasswordForEmail("");
-      setEmailErrorMsg("Невірний поточний пароль");
+      setEmailErrorMsg("The current password is incorrect");
       setPasswordForEmailError(true);
-      console.log("Невірний поточний пароль");
+      console.log("The current password is incorrect");
     }
   };
 
@@ -92,7 +93,7 @@ export const SettingsPage = () => {
         type: "UPDATE_USER_PASSWORD",
         payload: { email: user.email, newPassword: newPassword },
       });
-      console.log("Пароль оновлено.");
+      console.log("Password updated.");
       setPasswordErrorMsg("");
       setNewPasswordError(false);
       setPasswordForPasswordError(false);
@@ -108,9 +109,9 @@ export const SettingsPage = () => {
       }
     } else {
       setPasswordForPassword("");
-      setPasswordErrorMsg("Невірний поточний пароль");
+      setPasswordErrorMsg("The current password is incorrect");
       setPasswordForPasswordError(true);
-      console.log("Невірний поточний пароль");
+      console.log("The current password is incorrect");
     }
   };
 
@@ -120,120 +121,154 @@ export const SettingsPage = () => {
   };
 
   if (user && user.email) {
-    console.log(`Поточний email користувача: ${user.email}`);
+    console.log(`Current user email: ${user.email}`);
   }
 
-  //for title=================
-  // Replace with actual authentication state
-  // const isAuthenticated = true; //user.email знайти підтвердження авторизації від системи
-  // Якщо у вас вже є змінна, що містить різні назви для сторінок
-  const pageTitle = "Settings"; // Тут можна передати потрібний заголовок
-  //for title=================
+  const pageTitle = "Settings"; // передати  заголовок
 
   return (
     <div className="default-container-auth jost-font-text">
-      <div className="Status-Bar-Box">
-        <img
-          className="Status-Bar"
-          src="svg/Status-Bar-Black.svg"
-          alt="icon-enter"
-        />
-      </div>
-
-      {/* title ідентичний для всіх сторінок */}
       <TitleComponent pageTitle={pageTitle} />
-      <UsersBlock user={user} />
-      {/* {user && user.isAdmin ? <UsersBlock user={user} /> : null} */}
 
-      <form onSubmit={handleChangeEmail}>
+      <div className="scroll-block">
+        <form onSubmit={handleChangeEmail}>
+          <div className="input_field-container">
+            <label htmlFor="newEmail" className="input_label">
+              New email
+            </label>
+            <input
+              className={`input_field ${newEmailError ? "error" : ""}`}
+              name="newEmail"
+              type="email"
+              placeholder={newEmailError ? emailErrorMsg : "New email"}
+              value={newEmail}
+              onChange={(e) => {
+                setNewEmailError(false);
+                setNewEmail(e.target.value);
+              }}
+              required
+            />
+            <label htmlFor="passwordForEmail" className="input_label">
+              Current password
+            </label>
+            <PasswordInput
+              className={`input_field ${passwordForEmailError ? "error" : ""}`}
+              name="passwordForEmail"
+              value={passwordForEmail}
+              onChange={(e) => {
+                setPasswordForEmailError(false);
+                setPasswordForEmail(e.target.value);
+              }}
+              placeholder={
+                passwordForEmailError ? emailErrorMsg : "Current password"
+              }
+              type="password"
+            />
+            <button type="submit" className="settings-button">
+              Save Email
+            </button>
+          </div>
+        </form>
+
+        <div className="button-container-divider"></div>
+
+        <form onSubmit={handleChangePassword}>
+          <div className="input_field-container">
+            <label htmlFor="newPassword" className="input_label">
+              New password
+            </label>
+            <PasswordInput
+              className={`input_field ${newPasswordError ? "error" : ""}`}
+              name="newPassword"
+              value={newPassword}
+              onChange={(e) => {
+                setNewPasswordError(false);
+                setNewPassword(e.target.value);
+              }}
+              placeholder={newPasswordError ? passwordErrorMsg : "New password"}
+              type="password"
+            />
+
+            <label htmlFor="passwordForPassword" className="input_label">
+              Current password
+            </label>
+            <PasswordInput
+              className={`input_field ${
+                passwordForPasswordError ? "error" : ""
+              }`}
+              name="passwordForPassword"
+              value={passwordForPassword}
+              onChange={(e) => {
+                setPasswordForPasswordError(false);
+                setPasswordForPassword(e.target.value);
+              }}
+              placeholder={
+                passwordForPasswordError ? passwordErrorMsg : "Current password"
+              }
+              type="password"
+            />
+            <button type="submit" className="settings-button">
+              Save password
+            </button>
+          </div>
+        </form>
+        <div className="button-container-divider"></div>
         <div className="input_field-container">
-          <label htmlFor="newEmail" className="input_label">
-            Новий email
-          </label>
-          <input
-            className={`input_field ${newEmailError ? "error" : ""}`}
-            name="newEmail"
-            type="email"
-            placeholder={newEmailError ? emailErrorMsg : "Новий email"}
-            value={newEmail}
-            onChange={(e) => {
-              setNewEmailError(false);
-              setNewEmail(e.target.value);
-            }}
-            required
-          />
-          <label htmlFor="passwordForEmail" className="input_label">
-            Поточний пароль
-          </label>
-          <PasswordInput
-            className={`input_field ${passwordForEmailError ? "error" : ""}`}
-            name="passwordForEmail"
-            value={passwordForEmail}
-            onChange={(e) => {
-              setPasswordForEmailError(false);
-              setPasswordForEmail(e.target.value);
-            }}
-            placeholder={
-              passwordForEmailError ? emailErrorMsg : "Поточний пароль"
-            }
-            type="password"
-          />
-          <button type="submit" className="settings-button">
-            Зберегти Email
+          <Link to="/delete-account" className="delete-button">
+            Delete account
+          </Link>
+          <button onClick={handleLogout} className="settings-button">
+            Sign out
           </button>
         </div>
-      </form>
-
-      <div className="button-container-divider"></div>
-
-      <form onSubmit={handleChangePassword}>
-        <div className="input_field-container">
-          <label htmlFor="newPassword" className="input_label">
-            Новий пароль
-          </label>
-          <PasswordInput
-            className={`input_field ${newPasswordError ? "error" : ""}`}
-            name="newPassword"
-            value={newPassword}
-            onChange={(e) => {
-              setNewPasswordError(false);
-              setNewPassword(e.target.value);
-            }}
-            placeholder={newPasswordError ? passwordErrorMsg : "Новий пароль"}
-            type="password"
-          />
-          <label htmlFor="passwordForPassword" className="input_label">
-            Поточний пароль
-          </label>
-          <PasswordInput
-            className={`input_field ${passwordForPasswordError ? "error" : ""}`}
-            name="passwordForPassword"
-            value={passwordForPassword}
-            onChange={(e) => {
-              setPasswordForPasswordError(false);
-              setPasswordForPassword(e.target.value);
-            }}
-            placeholder={
-              passwordForPasswordError ? passwordErrorMsg : "Поточний пароль"
-            }
-            type="password"
-          />
-          <button type="submit" className="settings-button">
-            Зберегти пароль
-          </button>
-        </div>
-      </form>
-      <div className="button-container-divider"></div>
-      <div className="input_field-container">
-        <Link to="/delete-account" className="delete-button">
-          Видалити акаунт
-        </Link>
-        <button onClick={handleLogout} className="settings-button">
-          Вийти
-        </button>
+      </div>
+      <div className="UsersBlockSpace">
+        <UsersBlock user={user} />
       </div>
     </div>
   );
 };
 
 export default SettingsPage;
+
+// Детальний опис файлу SettingsPage.js:
+
+// Імпорти:
+// Основні модулі та хуки React, включаючи useContext та useState.
+// Компонент useNavigate для навігації.
+// Контекст аутентифікації AuthContext.
+// Компоненти Link, PasswordInput, TitleComponent та UsersBlock.
+
+// Компонент SettingsPage:
+// Отримує dispatch, user та users з контексту аутентифікації.
+// Використовує стани для керування введеними даними та помилками:
+// newEmail, newPassword, passwordForEmail, passwordForPassword
+// newEmailError, passwordForEmailError, newPasswordError, passwordForPasswordError
+// emailErrorMsg, passwordErrorMsg
+// Визначає функції handleChangeEmail та handleChangePassword для оновлення email та пароля користувача.
+// Визначає функцію handleLogout для виходу користувача з системи.
+
+// Функція handleChangeEmail:
+// Перевіряє, чи поточний пароль користувача є правильним.
+// Перевіряє, чи новий email не збігається з поточним email користувача.
+// Перевіряє, чи новий email не вже зареєстрований іншим користувачем.
+// Якщо всі перевірки пройдені успішно, оновлює email користувача за допомогою dispatch з типом UPDATE_USER_EMAIL.
+// Якщо пароль невірний, встановлює відповідну помилку.
+// Після успішного оновлення email, пропонує користувачеві вийти з системи, щоб застосувати зміни.
+
+// Функція handleChangePassword:
+// Перевіряє, чи поточний пароль користувача є правильним.
+// Якщо пароль правильний, оновлює пароль користувача за допомогою dispatch з типом UPDATE_USER_PASSWORD.
+// Якщо пароль невірний, встановлює відповідну помилку.
+// Після успішного оновлення пароля, пропонує користувачеві вийти з системи, щоб застосувати зміни.
+
+// Рендеринг сторінки налаштувань:
+// Використовує компонент TitleComponent для відображення заголовку сторінки.
+// Відображає форми для оновлення email та пароля користувача.
+// Використовує компонент PasswordInput для введення пароля.
+// Додає кнопки "Зберегти Email" та "Зберегти пароль" для подачі відповідних форм.
+// Додає посилання на сторінку видалення облікового запису та кнопку "Вийти" для виходу з системи.
+// Використовує компонент UsersBlock для відображення інформації про поточного користувача.
+
+// Загалом, файл SettingsPage.js відповідає за реалізацію сторінки налаштувань користувача.
+// Він дозволяє користувачеві змінити свій email та пароль, а також надає можливість видалити обліковий запис та вийти з системи.

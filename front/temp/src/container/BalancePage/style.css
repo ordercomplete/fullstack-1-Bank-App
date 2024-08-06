@@ -1,0 +1,110 @@
+.balance-container {
+  /* background: no-repeat, white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 393px;
+  height: 852px;
+  border: 1px solid #775CE6;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; */
+
+  /* Додати до heroku 07.07.2024 */
+  padding-top: 0;
+  /* Видалено відступ зверху */
+  background: white;
+  position: relative;
+  /* Змінено з absolute на relative */
+  top: 0;
+  /* Видалено зміщення по вертикалі */
+  left: 0;
+  /* Видалено зміщення по горизонталі */
+  transform: none;
+  /* Видалено трансформацію */
+  width: 100%;
+  /* Змінено ширину на 100% */
+  height: 100%;
+  /* Змінено висоту на 100% */
+  border: none;
+  /* Видалено рамку */
+  border-radius: 0;
+  /* Видалено закруглення кутів */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: auto;
+  /* Додано можливість прокручування */
+
+}
+
+.balance-background-container {
+  /* padding-top: 40px; */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-evenly; */
+  /* gap: 5px; */
+  color: white;
+  width: 393px;
+  height: 201px;
+  background: url('../../../public/background-2.png') no-repeat center center;
+  background-size: cover;
+}
+
+.balance-users-block {
+
+  display: flex;
+  justify-content: space-between;
+  margin: 0px 10px;
+  align-items: center;
+}
+
+.balance-users-icon-link {
+  color: white;
+  margin: 10px;
+}
+
+.balance-icons-block {
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 20px;
+  /* padding: 10px 20px; */
+}
+
+.icon-link-settings {}
+
+.icons {
+  margin: 10px;
+}
+
+.balance-icons-container {
+  display: flex;
+  margin-top: -35px;
+}
+
+.reseive-button,
+.send-button {
+  color: #1D1D1F;
+  margin: 0 6px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.balance-amount {
+  margin: 10px 0 10px 0;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.balance-TransactionList {
+  height: 550px;
+  margin-top: 10px;
+
+}

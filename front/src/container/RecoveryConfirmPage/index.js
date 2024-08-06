@@ -1,101 +1,102 @@
-// 1 Файл RecoveryConfirmPage
 import React, { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../AuthContext";
-import { updatePassword } from "../../AuthActions";
-import { NavigationLink } from "../../component/NavigationLink";
+import { AuthContext } from "../../modul/AuthContext";
+import { updatePassword } from "../../modul/AuthActions";
 import PasswordInput from "../../component/PasswordInput";
 import TitleComponent from "../../component/TitleComponent";
 
 export const RecoveryConfirmPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { email, code } = location.state; // Getting data from RecoveryPage
-  const { users, dispatch } = useContext(AuthContext); // add dispatch 16.06.24-22:38
+  // Використовуємо хук useNavigate для навігації між сторінками
 
-  const user = users.find((user) => user.email === email); // Find the user
+  const location = useLocation();
+  // Використовуємо хук useLocation для отримання даних переданих з попередньої сторінки (RecoveryPage)
+
+  const { email, code } = location.state;
+  // Отримуємо email та код відновлення з стану сторінки (дані, передані з RecoveryPage)
+
+  const { users, dispatch } = useContext(AuthContext);
+  // Використовуємо контекст для доступу до списку користувачів та функції dispatch
+
+  const user = users.find((user) => user.email === email);
+  // Знаходимо користувача в списку користувачів за його email
 
   const [recoveryCode, setRecoveryCode] = useState("");
+  // Створюємо стан для введення коду відновлення
+
   const [newPassword, setNewPassword] = useState("");
+  // Створюємо стан для введення нового пароля
 
   if (!user) {
     alert("User not found");
+    // Покажемо попередження, якщо користувач не знайдений
     console.log("Recovery Confirm Page: User not found", email);
-    return null; // Return null to avoid rendering the page
+    // Логування помилки
+    return null;
+    // Повертаємо null, щоб уникнути рендерингу сторінки
   }
 
   console.log("Selected user for recovery:", user);
+  // Логування вибраного користувача
 
   const handleRestore = (event) => {
     event.preventDefault();
-    // const { recoveryCode, newPassword } = event.target.elements; //прибрали на перевірку 29.06.24
+    // Запобігаємо перезавантаженню сторінки при відправці форми
 
     if (recoveryCode === code) {
-      // видалили value з if (recoveryCode.value === code) 29.06.24
-      // Call the method to update the password
-      const updateResponse = updatePassword(email, newPassword, dispatch); // видалили value з newPassword.value 29.06.24
+      // Перевірка чи введений код співпадає з кодом з RecoveryPage
+      const updateResponse = updatePassword(email, newPassword, dispatch);
+      // Виклик функції для оновлення пароля
 
       if (updateResponse.success) {
         console.log(`Password for ${email} changed successfully.`);
-        navigate("/signin"); // Redirect to sign in page
+        navigate("/signin");
+        // Перенаправлення на сторінку входу після успішного оновлення пароля
       } else {
-        console.log(updateResponse.message); // Show the error message
+        console.log(updateResponse.message);
+        // Логування повідомлення про помилку
       }
     } else {
       console.log("Incorrect verification code. Please try again.");
+      // Логування про неправильний код відновлення
     }
   };
 
-  // Якщо у вас вже є змінна, що містить різні назви для сторінок
-  const pageTitle = "Settings"; // Тут можна передати потрібний заголовок
-  //for title=================
+  const pageTitle = "Settings";
+  // Заголовок сторінки, який можна змінити за потреби
 
   return (
     <div className="default-container">
-      {/* <div>
-        <button onClick={() => navigate(-1)} className="nav_back-button">
-          Назад
-        </button>
-        <NavigationLink isAuthenticated={Boolean()} />
-      </div> */}
       <TitleComponent pageTitle={pageTitle} />
+      {/* Відображаємо заголовок сторінки */}
       <h4 className="text-under-title">Write the code you received</h4>
+      {/* Підзаголовок сторінки */}
       <form onSubmit={handleRestore}>
+        {/* Форма для введення коду відновлення та нового пароля */}
         <div className="input_field-container">
-          {/* <input
-            className="input_field"
-            name="recoveryCode"
-            placeholder="Enter Code"
-            required
-          /> */}
           <PasswordInput
-            // name="recoveryCode"
-            // type="text"
-            // placeholder="Enter Code"
             name="recoveryCode"
             value={recoveryCode}
-            onChange={(e) => setRecoveryCode(e.target.value)} // Add onChange handler
+            // Значення стану recoveryCode
+            onChange={(e) => setRecoveryCode(e.target.value)}
+            // Обробник зміни, який оновлює стан recoveryCode при кожній зміні в полі вводу
             placeholder="Enter Code"
+            // Плейсхолдер для поля вводу коду відновлення
           />
-
-          {/* <input
-            className="input_field"
-            name="newPassword"
-            type="password"
-            placeholder="New Password"
-            required
-          /> */}
           <PasswordInput
-            // name="newPassword"
-            // placeholder="New Password"
             name="newPassword"
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)} // Add onChange handler
+            // Значення стану newPassword
+            onChange={(e) => setNewPassword(e.target.value)}
+            // Обробник зміни, який оновлює стан newPassword при кожній зміні в полі вводу
             placeholder="New Password"
+            // Плейсхолдер для поля вводу нового паролю
           />
         </div>
         <button type="submit" className="continue-button">
+          {/* Кнопка для відправки форми */}
           Restore Password
+          {/* Текст кнопки, що відображає функціонал */}
         </button>
       </form>
     </div>
@@ -103,3 +104,4 @@ export const RecoveryConfirmPage = () => {
 };
 
 export default RecoveryConfirmPage;
+// Експортуємо компонент для використання в інших частинах додатка

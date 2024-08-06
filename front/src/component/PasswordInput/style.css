@@ -1,41 +1,45 @@
-/* File PasswordInput */
+/* Файл PasswordInput */
 
 .password-input-container {
   position: relative;
+  width: 90%;
 }
 
-.password-input-container input[type="password"],
-.password-input-container input[type="text"] {
-  padding-right: 36px;
-  /* Enough space for the button */
+.password-input-container input {
+  width: 100%;
 }
 
 .password-visibility-button {
   position: absolute;
   top: 50%;
-  right: 8px;
-  /* Space from the right edge */
+  right: 5%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 1.2em;
-  /* Size of the icon */
+  color: #000;
+  z-index: 10;
 }
 
 .password-visibility-button.active {
   color: #007bff;
-  /* Color for active state */
 }
 
-/* Колір рамки при помилці червоний */
 .input_field.error {
   border-color: red;
-  /* color: red; */
-
 }
 
 .input_field.error::placeholder {
   color: red;
-  /* Колір placeholder червоний при помилці */
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-password-eye,
+input[type="password"]::-moz-password-eye,
+input[type="password"]::-webkit-input-decoration,
+input[type="password"]::-webkit-textfield-decorator,
+input[type="password"]::-internal-decorator {
+  display: none;
 }

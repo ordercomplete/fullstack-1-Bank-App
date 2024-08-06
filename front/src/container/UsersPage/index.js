@@ -1,133 +1,113 @@
-// 1 Файл UsersPage.js
-// import React, { useContext, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import { AuthContext } from "../../AuthContext";
-
-// export const UsersPage = () => {
-//   const { user, users, dispatch } = useContext(AuthContext);
-
-//   useEffect(() => {
-//     // add useEffect + dispatch 15.06.24-12:55
-//     // Load default users if no users exist in the context
-//     if (!users.length) {
-//       dispatch({
-//         type: "LOAD_USERS",
-//         payload: { users: [] }, // Empty array since initial users are now loaded from localStorage
-//       });
-//     }
-//   }, [users, dispatch]); // Added users and dispatch as dependencies
-
-//   const handleClearUsers = () => {
-//     dispatch({ type: "CLEAR_USERS" });
-//   };
-
-//   return (
-//     <div className="default-container">
-//       <h2>Ви увійшли як {user ? `${user.email}` : "Guest"}</h2>
-//       <Link to="/balance" className="nav_back-button">
-//         Back
-//       </Link>
-//       <button onClick={handleClearUsers} className="clear-notifications-button">
-//         Очистити список
-//       </button>
-//       <h1>Registered Users</h1>
-//       <div>
-//         {users.length > 0 ? (
-//           users.map(
-//             (
-//               user //remove {user.name} 15.06.24-19:24
-//             ) => (
-//               <div key={user.id} className="user-item">
-//                 {user.email}
-//                 <Link to={`/user-data/${user.id}`} className="user-data-link">
-//                   View Transactions
-//                 </Link>
-//               </div>
-//             )
-//           )
-//         ) : (
-//           <p>Немає зареєстрованих користувачів.</p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default UsersPage;
-
-// 2 Файл UsersPage.js
-import React, { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../AuthContext";
-import { deleteUserAccount } from "../../AuthActions";
-import TitleComponent from "../../component/TitleComponent";
-import UsersBlock from "../../component/UsersBlock";
-import "./style.css";
+//Файл UsersPage.js
+// Імпорт потрібних бібліотек та компонентів
+import React, { useContext } from "react"; // Імпортується React та хук useContext для роботи з контекстом.
+import { Link, useNavigate } from "react-router-dom"; // Імпорт компоненту Link для навігації та useNavigate для переспрямування.
+import { AuthContext } from "../../modul/AuthContext"; // Імпортування контексту авторизації.
+import { deleteUserAccount } from "../../modul/AuthActions"; // Імпортування функції для видалення облікового запису користувача.
+import TitleComponent from "../../component/TitleComponent"; // Імпорт компоненту заголовка сторінки.
+import UsersBlock from "../../component/UsersBlock"; // Імпорт компоненту блоку користувачів.
+import "./style.css"; // Імпортування стилів для сторінки.
+import { CalculateBalance } from "../../component/СalculateBalance";
 
 export const UsersPage = () => {
-  const { users, user, dispatch } = useContext(AuthContext);
-  const navigate = useNavigate();
+  // Оголошення функціонального компоненту UsersPage.
+  const { users, user, dispatch, transactions } = useContext(AuthContext); // Отримання списку користувачів, поточного користувача та dispatch з контексту авторизації.
+  const navigate = useNavigate(); // Ініціалізація хука нового роутингу.
 
   const handleDelete = (userEmail) => {
+    // Оголошення функції для обробки видалення користувача.
     if (
-      user.isAdmin &&
-      window.confirm(`Are you sure you want to delete ${userEmail}?`)
+      user.isAdmin && // Перевірка, чи поточний користувач є адміністратором.
+      window.confirm(`Are you sure you want to delete ${userEmail}?`) // Виведення підтвердження для видалення користувача.
     ) {
-      deleteUserAccount(userEmail, dispatch);
+      deleteUserAccount(userEmail, dispatch); // Виклик функції для видалення облікового запису.
     } else {
-      alert("You don't have permission to delete this account.");
+      alert("You don't have permission to delete this account."); // Виведення повідомлення про неможливість видалення облікового запису.
     }
   };
 
-  const handleViewUserData = (userId) => {
-    navigate(`/user-data/${userId}`);
+  const handleViewUserTransactions = (userId) => {
+    // Оголошення функції для перегляду даних користувача.
+    navigate(`/user-transactions/${userId}`); // Переспрямування на сторінку з даними користувача за його ID.
   };
 
-  //for title=================
-  // Replace with actual authentication state
-  // const isAuthenticated = true; //user.email знайти підтвердження авторизації від системи
-  // Якщо у вас вже є змінна, що містить різні назви для сторінок
-  const pageTitle = "Users"; // Тут можна передати потрібний заголовок
-  //for title=================
+  const handleViewUserNotifications = (userId) => {
+    // Оголошення функції для перегляду нотифікацій користувача.
+    navigate(`/user-notifications/${userId}`); // Переспрямування на сторінку з нотифікаціями користувача за його ID.
+  };
+
+  const pageTitle = "Users"; // Встановлення заголовка сторінки.
 
   return (
     <div className="default-container-auth jost-font-text">
-      {/* title ідентичний для всіх сторінок */}
+      {/* Дефолтний контейнер з CSS класами */}
       <TitleComponent pageTitle={pageTitle} />
-      {/* <h1>Users</h1> */}
+      {/* Компонент з заголовком сторінки, передається заголовок */}
       <div className="user-data-list">
-        {users.map((u) => (
-          <div key={u.id} className="user-data-item">
-            <div className="user-data">
-              <strong>Email:</strong> {u.email}
-              <br />
-              <strong>Confirmed:</strong> {u.confirmed ? "Yes" : "No"}
-              <br />
-              <strong>Admin:</strong> {u.isAdmin ? "Yes" : "No"}
-            </div>
-            <div className="user-actions">
-              <button
-                onClick={() => handleViewUserData(u.id)}
-                className="user-transactions-button"
-              >
-                Транзакції {u.email}
-              </button>
-              {user.isAdmin && (
+        {/* Контейнер для списку користувачів */}
+        {users.map(
+          (
+            u // Мапування кожного користувача з масиву users.
+          ) => (
+            <div key={u.id} className="user-data-item">
+              {/* Ідентифікація кожного користувача за допомогою унікального ключа */}
+              <div className="user-data">
+                {/* Контейнер для даних користувача */}
+                <strong>Email:</strong> {u.email}
+                <br />
+                <strong>Confirmed:</strong> {u.confirmed ? "Yes" : "No"}
+                {/* Відображення статусу підтвердження */}
+                <br />
+                <strong>Admin:</strong> {u.isAdmin ? "Yes" : "No"}
+                {/* Відображення адміністративного статусу */}
+                <br />
+                <strong>Balance:</strong>{" "}
+                {u.balance ? (
+                  <CalculateBalance
+                    userEmail={u.email}
+                    transactions={transactions}
+                  />
+                ) : (
+                  "N/A"
+                )}
+                {/* Відображення балансу користувача */}
+                <br />
+              </div>
+
+              <div className="user-actions">
+                {/* Контейнер для дій над користувачем */}
                 <button
-                  onClick={() => handleDelete(u.email)}
-                  className="user-delete-button"
+                  onClick={() => handleViewUserTransactions(u.id)} // Виклик функції перегляду даних користувача з передаванням його ID.
+                  className="user-transactions-button"
                 >
-                  Delete Account
+                  Transactions
+                  {/* Кнопка для перегляду транзакцій користувача */}
                 </button>
-              )}
+                <button
+                  onClick={() => handleViewUserNotifications(u.id)} // Виклик функції перегляду нотифікацій користувача з передаванням його ID.
+                  className="user-notifications-button"
+                >
+                  Notifications
+                  {/* Кнопка для перегляду нотифікацій користувача */}
+                </button>
+                {user.isAdmin && ( // Якщо поточний користувач є адміністратором, додатково створюється кнопка видалення
+                  <button
+                    onClick={() => handleDelete(u.email)} // Виклик функції видалення користувача з передаванням його email.
+                    className="user-delete-button"
+                  >
+                    Delete Account
+                    {/* Текст кнопки для видалення облікового запису */}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
       <UsersBlock user={user} />
-      {/* {user && user.isAdmin ? <UsersBlock user={user} /> : null} */}
+      {/* Компонент для виведення блоку користувачів, передача поточного користувача як пропс */}
     </div>
   );
 };
 
-export default UsersPage;
+export default UsersPage; // Експорт компонента за замовчуванням для його використання в інших частинах додатка.

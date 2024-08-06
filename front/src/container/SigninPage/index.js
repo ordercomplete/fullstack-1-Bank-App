@@ -1,164 +1,125 @@
-// 2 Файл SigninPage.js
-import React, { useContext, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { AuthContext } from "../../AuthContext";
-// import { NavigationLink } from "../../component/NavigationLink";
-import TitleComponent from "../../component/TitleComponent";
-import PasswordInput from "../../component/PasswordInput";
+// Файл SigninPage.js
+import React, { useContext, useState } from "react"; // Імпортуємо React, useContext і useState з бібліотеки React.
+import { useNavigate, Link } from "react-router-dom"; // Імпортуємо useNavigate та Link для навігації.
+import { AuthContext } from "../../modul/AuthContext"; // Імпортуємо AuthContext для доступу до даних автентифікації.
+import TitleComponent from "../../component/TitleComponent"; // Імпортуємо TitleComponent для відображення заголовка сторінки.
+import PasswordInput from "../../component/PasswordInput"; // Імпортуємо PasswordInput для відображення поля введення пароля.
 
 export const SigninPage = () => {
-  const navigate = useNavigate();
-  const { user, users, dispatch } = useContext(AuthContext); // Витягаємо список користувачів з контексту
-  // const [error, setError] = useState("");
+  // Оголошення компонента SigninPage.
+  const navigate = useNavigate(); // Використовуємо хук useNavigate для навігації між сторінками.
+  const { user, users, dispatch } = useContext(AuthContext); // Витягаємо користувача, список користувачів та dispatch з AuthContext.
 
-  const [passwordForEmailError, setPasswordForEmailError] = useState(false);
-  const [passwordForEmail, setPasswordForEmail] = useState("");
-
-  const [emailError, setEmailError] = useState("");
-
-  const [email, setEmail] = useState("");
-  const [newEmailError, setNewEmailError] = useState(false);
+  const [passwordForEmailError, setPasswordForEmailError] = useState(false); // Стан для помилки введення пароля.
+  const [passwordForEmail, setPasswordForEmail] = useState(""); // Стан для збереження пароля.
+  const [emailError, setEmailError] = useState(""); // Стан для помилки введення email.
+  const [email, setEmail] = useState(""); // Стан для збереження email.
+  const [newEmailError, setNewEmailError] = useState(false); // Стан для нової помилки введення email.
 
   const handleSignin = (event) => {
-    event.preventDefault();
-    const { email, password } = event.target.elements;
-    const user = users.find((user) => user.email === email.value);
-    let isError = false;
+    // Функція обробки входу користувача.
+    event.preventDefault(); // Запобігаємо перезавантаженню сторінки.
+    const { email, password } = event.target.elements; // Витягаємо значення email та password з форми.
+    const user = users.find((user) => user.email === email.value); // Знаходимо користувача за email.
+    let isError = false; // Ініціалізуємо змінну для відстеження помилок.
 
-    console.log("Поточний користувач:", user);
-    console.log("Всі користувачі:", users);
-
-    setPasswordForEmailError(false);
-    setEmailError("");
+    setPasswordForEmailError(false); // Скидаємо помилку введення пароля.
+    setEmailError(""); // Скидаємо помилку введення email.
 
     if (!user) {
-      setNewEmailError(true);
-      setEmailError("User not found");
-      setEmail("");
-      console.log("Signin Page: User not found", email.value);
-      return;
+      // Якщо користувача не знайдено,
+      setNewEmailError(true); // встановлюємо нову помилку email.
+      setEmailError("User not found"); // Встановлюємо текст помилки.
+      setEmail(""); // Очищаємо поле email.
+      return; // Перериваємо виконання функції.
     }
 
     if (user && user.password !== passwordForEmail) {
-      setPasswordForEmail("");
-      setEmailError("Incorrect password");
-      setPasswordForEmailError(true);
-      console.log("Signin Page: Incorrect password for", email.value);
-      return;
+      // Якщо користувач знайдений, але пароль невірний,
+      setPasswordForEmail(""); // Очищаємо поле пароля.
+      setEmailError("Incorrect password"); // Встановлюємо текст помилки.
+      setPasswordForEmailError(true); // Встановлюємо помилку введення пароля.
+      return; // Перериваємо виконання функції.
     }
 
     if (!user.confirmed) {
-      setEmailError("Account not confirmed");
-      setNewEmailError(true);
-      setEmail("");
-      console.log("Signin Page: Account not confirmed for", email.value);
-      return;
+      // Якщо акаунт не підтверджено,
+      setEmailError("Account not confirmed"); // Встановлюємо текст помилки про непідтверджений акаунт.
+      setNewEmailError(true); // Встановлюємо нову помилку email.
+      setEmail(""); // Очищаємо поле email.
+      return; // Перериваємо виконання функції.
     }
 
     if (!isError) {
+      // Якщо помилок не виявлено,
       dispatch({
-        type: "LOGIN",
-        payload: { token: "some_token", user: user },
+        // Виконуємо dispatch у контексті аутентифікації.
+        type: "LOGIN", // Тип дії - логін.
+        payload: { token: "some_token", user: user }, // Передаємо токен і дані користувача.
       });
 
-      console.log("Signin Page: User logged in", email.value);
-      navigate("/balance");
+      navigate("/balance"); // Перенаправляємо користувача на сторінку балансу.
     } else {
-      setPasswordForEmail("");
-      // setEmailErrorMsg("Невірний поточний пароль");
-      setEmailError("Incorrect current password");
-      setPasswordForEmailError(true);
-      console.log("Невірний поточний пароль");
+      setPasswordForEmail(""); // Очищаємо поле пароля.
+      setEmailError("Incorrect current password"); // Встановлюємо текст помилки.
+      setPasswordForEmailError(true); // Встановлюємо помилку введення пароля.
     }
-    // }
   };
 
-  // const handleForgotPassword = () => {
-  //   console.log("User selected password recovery.");
-  //   navigate("/recovery");
-  // };
-
-  //for title=================
-  // Replace with actual authentication state
-  // const isAuthenticated = true; //user.email знайти підтвердження авторизації від системи
-  // Якщо у вас вже є змінна, що містить різні назви для сторінок
-  const pageTitle = "Sign in"; // Тут можна передати потрібний заголовок
-  //for title=================
+  const pageTitle = "Sign in"; // Заголовок сторінки.
+  const textUnderTitle = "Select login method"; // Текст під заголовком.
 
   return (
     <div className="default-container">
-      <TitleComponent pageTitle={pageTitle} />
-
-      <h4 className="text-under-title">Select login method</h4>
+      <TitleComponent pageTitle={pageTitle} textUnderTitle={textUnderTitle} />{" "}
+      {/* Компонент для заголовка сторінки. */}
       <form onSubmit={handleSignin}>
+        {" "}
+        {/* Обробник форми входу. */}
         <div className="input_field-container">
-          {/* <label>Email</label> */}
           <label htmlFor="email" className="input_label">
-            Email
+            Email {/* Поле для вводу email. */}
           </label>
-          {/* <input
-            className="input_field"
-            name="email"
-            type="email"
-            placeholder="Email"
-            required
-          /> */}
           <input
-            className={`input_field ${newEmailError ? "error" : ""}`}
+            className={`input_field ${newEmailError ? "error" : ""}`} // Додаємо клас error, якщо є помилка email.
             name="email"
             type="email"
-            placeholder={newEmailError ? emailError : "Email"}
-            // placeholder="Email"
-            // value={user}
-            value={email || ""}
+            placeholder={newEmailError ? emailError : "Enter email"} // Показуємо текст помилки або підказку.
+            value={email || ""} // Встановлюємо значення email.
             onChange={(e) => {
-              setNewEmailError(false);
-              setEmail(e.target.value);
+              setNewEmailError(false); // Очищаємо помилку при зміні email.
+              setEmail(e.target.value); // Оновлюємо значення email.
             }}
-            required
+            required // Поле є обов'язковим для заповнення.
           />
-          {/* <label>
-            {newEmailError && (
-              <span className="error-message">{emailError}</span>
-            )}
-          </label> */}
-          {/* <label>Password</label> */}
-          <label htmlFor="passwordForEmail" className="input_label">
-            Password
-          </label>
-          {/* <input
-            className="input_field"
-            name="password"
-            type="password"
-            placeholder="Password"
-            required
-          /> */}
-          <PasswordInput
-            className={`input_field ${passwordForEmailError ? "error" : ""}`}
-            name="passwordForEmail"
-            value={passwordForEmail}
-            onChange={(e) => {
-              setPasswordForEmailError(false);
-              setPasswordForEmail(e.target.value);
-            }}
-            placeholder={passwordForEmailError ? emailError : "Password"}
-            // placeholder="Current Password"
-            type="password"
-            required
-          />
-          {/* <label>
-            {passwordForEmailError && (
-              <span className="error-message">{emailError}</span>
-            )}
-          </label> */}
         </div>
-        {/* {error && <p className="error-message">{error}</p>} */}
+        <div className="input_field-container">
+          <label htmlFor="passwordForEmail" className="input_label">
+            Password {/* Поле для вводу пароля. */}
+          </label>
+
+          <PasswordInput
+            className={`input_field ${passwordForEmailError ? "error" : ""}`} // Додаємо клас error, якщо є помилка пароля.
+            name="passwordForEmail"
+            value={passwordForEmail} // Встановлюємо значення пароля.
+            onChange={(e) => {
+              setPasswordForEmailError(false); // Очищаємо помилку при зміні пароля.
+              setPasswordForEmail(e.target.value); // Оновлюємо значення пароля.
+            }}
+            placeholder={passwordForEmailError ? emailError : "Enter password"} // Показуємо текст помилки або підказку.
+            type="password"
+            required // Поле є обов'язковим для заповнення.
+          />
+        </div>
         <div className="button-container">
-          <h4>
-            Forgot your password? <Link to="/recovery">Restore</Link>
-          </h4>
+          {" "}
+          {/* Блок для кнопок. */}
+          <h5>
+            Forgot your password? <Link to="/recovery">Restore</Link>{" "}
+            {/* Посилання на сторінку відновлення пароля. */}
+          </h5>
           <button type="submit" className="continue-button">
-            Continue
+            Continue {/* Кнопка для продовження (входу). */}
           </button>
         </div>
       </form>
@@ -166,4 +127,4 @@ export const SigninPage = () => {
   );
 };
 
-export default SigninPage;
+export default SigninPage; // Експортуємо компонент SigninPage за замовчуванням.

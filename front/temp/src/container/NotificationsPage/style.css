@@ -1,0 +1,108 @@
+.notifications-default-container {
+  background: no-repeat, #F5F5F7;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 393px;
+  height: 852px;
+  border: 1px solid #775CE6;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  color: black;
+}
+
+.notifications-container {
+  overflow-y: auto;
+  /* Правильна властивість для прокрутки по вертикалі */
+  max-height: 80vh;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  /* Елементи розташовані по вертикалі */
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  /* Проміжок між елементами */
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  /* Центрування по вертикалі */
+  padding: 10px 0;
+  /* Внутрішній відступ */
+  margin: 10px 0;
+  /* Зовнішній відступ */
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 5px 5px 2px 0px rgba(136, 124, 124, 0.75);
+  /* flex: none; */
+}
+
+/* box-shadow: [horizontal offset] [vertical offset] [blur radius] [spread radius] [color]; */
+
+/* Повний синтаксис */
+/* box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75); */
+
+/* Пояснення параметрів:
+   - horizontal offset: горизонтальне зміщення тіні від елемента (позитивне значення вправо, від'ємне - вліво)
+   - vertical offset: вертикальне зміщення тіні від елемента (позитивне значення вниз, від'ємне - вгору)
+   - blur radius: радіус розмиття тіні (зменшення для більш виразної тіні, збільшення - для розмиття)
+   - spread radius: розповсюдження тіні (позитивне значення розширює тінь, від'ємне - скорочує)
+   - color: колір тіні (може бути заданий як ім'я кольору, RGB, RGBA, HEX тощо)
+*/
+
+
+
+
+.notification-logo {
+  min-width: 50px;
+  /* Задати мінімальну ширину */
+  max-width: 50px;
+  /* Задати максимальну ширину */
+  height: 50px;
+  /* Задати фіксовану висоту */
+  margin: 0 10px;
+  /* Проміжок між логотипом та деталями */
+  display: flex;
+  align-items: center;
+  /* Центрувати зображення по вертикалі */
+  justify-content: center;
+  /* Центрувати зображення по горизонталі */
+}
+
+.notification-logo img {
+  width: 50px;
+  /* Не вийти за межі контейнера */
+  height: 50px;
+  /* Не вийти за межі контейнера */
+  /* height: auto; */
+  /* margin: 10px; */
+}
+
+.notification-details {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* Центрувати текст по вертикалі */
+  /* justify-content: flex-start; */
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.notification-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.notification-info {
+  font-size: 12px;
+  color: #555;
+  display: flex;
+  text-align: left;
+}
